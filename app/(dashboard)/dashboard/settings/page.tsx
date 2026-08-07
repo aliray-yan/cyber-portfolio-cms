@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
 import { SITE_EMAIL, SITE_OWNER, SITE_TAGLINE } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -8,10 +10,10 @@ export const metadata: Metadata = {
 export default function DashboardSettingsPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-100">Settings</h1>
+      <PageHeader title="Settings" size="panel" />
 
       <div className="mt-8 space-y-6">
-        <section className="rounded-lg border border-navy-800 bg-navy-800 p-6">
+        <Card>
           <h2 className="font-mono text-sm text-cyan-400">Profile</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-4">
@@ -29,30 +31,32 @@ export default function DashboardSettingsPage() {
               </dd>
             </div>
           </dl>
-        </section>
+        </Card>
 
-        <section className="rounded-lg border border-navy-800 bg-navy-800 p-6">
+        <Card>
           <h2 className="font-mono text-sm text-cyan-400">Social Links</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-slate-400">GitHub</dt>
-              <dd className="text-slate-100">github.com/alirayyan</dd>
+              <dd className="text-slate-100">github.com/aliray-yan</dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-slate-400">LinkedIn</dt>
-              <dd className="text-slate-100">linkedin.com/in/alirayyan</dd>
+              <dd className="text-slate-100">
+                linkedin.com/in/ali-rayyan-cybersecurity
+              </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-slate-400">Contact Email</dt>
               <dd className="text-slate-100">{SITE_EMAIL}</dd>
             </div>
           </dl>
-        </section>
+        </Card>
 
-        <section className="rounded-lg border border-navy-800 bg-navy-800 p-6">
+        <Card>
           <h2 className="font-mono text-sm text-cyan-400">Resume</h2>
-          <p className="mt-4 text-sm text-slate-100">resume-placeholder.pdf</p>
-        </section>
+          <p className="mt-4 text-sm text-slate-100">Ali Rayyan.pdf</p>
+        </Card>
       </div>
 
       <p className="mt-8 text-xs text-slate-400">

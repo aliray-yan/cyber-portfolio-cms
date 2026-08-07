@@ -1,9 +1,9 @@
 export const SITE_NAME = "Cyber Portfolio CMS";
 export const SITE_OWNER = "Ali Rayyan";
 export const SITE_TAGLINE = "Cybersecurity Student & Frontend AI Engineer";
-export const SITE_EMAIL = "ali@example.com";
-export const GITHUB_URL = "https://github.com/alirayyan";
-export const LINKEDIN_URL = "https://linkedin.com/in/alirayyan";
+export const SITE_EMAIL = "alirayyancyber@gmail.com";
+export const GITHUB_URL = "https://github.com/aliray-yan";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/ali-rayyan-cybersecurity/";
 
 export interface NavLink {
   label: string;

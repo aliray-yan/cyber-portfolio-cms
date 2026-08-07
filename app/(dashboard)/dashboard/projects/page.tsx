@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
+import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = {
   title: "Manage Projects | Cyber Portfolio CMS",
@@ -7,23 +10,13 @@ export const metadata: Metadata = {
 export default function DashboardProjectsPage() {
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-slate-100">
-          Manage Projects
-        </h1>
-        <button
-          type="button"
-          disabled
-          className="focus-ring rounded bg-cyan-400 px-4 py-2 text-sm font-semibold text-navy-950 opacity-60"
-        >
-          + Add Project
-        </button>
-      </div>
-
-      <div className="mt-10 rounded-lg border border-dashed border-navy-800 p-12 text-center">
-        <p className="text-sm text-slate-400">
-          No projects yet. Project management coming in Phase 5.
-        </p>
+      <PageHeader
+        title="Manage Projects"
+        size="panel"
+        action={<Button disabled>+ Add Project</Button>}
+      />
+      <div className="mt-10">
+        <EmptyState message="No projects yet. Project management coming in Phase 5." />
       </div>
     </div>
   );

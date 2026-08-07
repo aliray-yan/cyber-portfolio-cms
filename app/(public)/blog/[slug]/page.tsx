@@ -1,4 +1,7 @@
+import PageHeader from "@/components/ui/PageHeader";
+import Badge from "@/components/ui/Badge";
 import PlaceholderBanner from "@/components/ui/PlaceholderBanner";
+import { getPostBySlug } from "@/lib/data/blog";
 
 interface BlogDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -6,13 +9,21 @@ interface BlogDetailPageProps {
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
       <p className="font-mono text-sm text-cyan-400">Article</p>
-      <h1 className="mt-2 text-3xl font-bold text-slate-100 md:text-4xl">
-        {slug}
-      </h1>
+      <PageHeader title={post?.title ?? slug} className="mt-2" />
+
+      {post && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+          <span>{post.date}</span>
+          {post.tags.map((tag) => (
+            <Badge key={tag}>{tag}</Badge>
+          ))}
+        </div>
+      )}
 
       <div className="mt-8">
         <PlaceholderBanner
@@ -23,10 +34,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
       <article className="mt-10 max-w-none leading-relaxed text-slate-400">
         <p>
-          This article&apos;s full content will be rendered here once the
-          blog CMS is connected in a future phase. For now, this page
-          confirms that dynamic routing resolves correctly for any article
-          slug.
+          {post?.excerpt ??
+            "This article's full content will be rendered here once the blog CMS is connected in a future phase."}{" "}
+          For now, this page confirms that dynamic routing resolves correctly
+          for any article slug.
         </p>
       </article>
     </div>

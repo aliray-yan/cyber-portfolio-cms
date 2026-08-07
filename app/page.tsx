@@ -1,48 +1,17 @@
-import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import ChatWidget from "@/components/chat/ChatWidget";
+import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import LinkButton from "@/components/ui/LinkButton";
 import { SITE_OWNER } from "@/lib/constants";
-
-const FEATURED_PROJECTS = [
-  {
-    slug: "isop",
-    title: "ISOP",
-    description:
-      "Intelligent SOC Operations Platform integrating threat intel feeds and AI-driven correlation.",
-    tags: ["Node.js", "PostgreSQL", "SIEM"],
-  },
-  {
-    slug: "ihadrs",
-    title: "IHADRS",
-    description:
-      "Host-based attack detection engine with MITRE-mapped rules and anomaly detection.",
-    tags: ["Python", "FastAPI", "ML"],
-  },
-  {
-    slug: "sniper-defense",
-    title: "Tactical Sniper Defense",
-    description:
-      "Browser-based tactical defense game built with vanilla JS and HTML5 Canvas.",
-    tags: ["JavaScript", "Canvas"],
-  },
-];
-
-const SKILL_GROUPS = [
-  {
-    title: "Cybersecurity",
-    items: ["SIEM", "Threat Intelligence", "Incident Response", "Network Security"],
-  },
-  {
-    title: "Development",
-    items: ["TypeScript", "React", "Next.js", "Node.js"],
-  },
-  {
-    title: "Tools & Platforms",
-    items: ["Wazuh", "Wireshark", "Kali Linux", "Git"],
-  },
-];
+import { getFeaturedProjects } from "@/lib/data/projects";
+import { SKILL_CATEGORIES } from "@/lib/data/skills";
 
 export default function HomePage() {
+  const featuredProjects = getFeaturedProjects(3);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -58,22 +27,15 @@ export default function HomePage() {
             <span className="text-cyan-400">Frontend AI Engineer</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-slate-400">
-            Building secure, scalable systems — from SOC detection engineering
-            to full-stack platforms that put real security data to work.
+            SOC analyst intern building Wazuh and Sentinel detections,
+            FortiGate log pipelines, phishing analysis, and the automation
+            that turns raw alerts into analyst-ready context.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link
-              href="/projects"
-              className="focus-ring rounded bg-cyan-400 px-6 py-3 text-sm font-semibold text-navy-950 transition-opacity hover:opacity-90"
-            >
-              View My Projects
-            </Link>
-            <Link
-              href="/contact"
-              className="focus-ring rounded border border-navy-800 px-6 py-3 text-sm font-semibold text-slate-100 transition-colors hover:border-cyan-400"
-            >
+            <LinkButton href="/projects">View My Projects</LinkButton>
+            <LinkButton href="/contact" variant="outline">
               Contact Me
-            </Link>
+            </LinkButton>
           </div>
         </section>
 
@@ -88,35 +50,35 @@ export default function HomePage() {
             </p>
 
             <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {FEATURED_PROJECTS.map((project) => (
-                <div
-                  key={project.slug}
-                  className="rounded-lg border border-navy-800 bg-navy-800 p-6"
-                >
+              {featuredProjects.map((project) => (
+                <Card key={project.slug} className="flex flex-col">
                   <h3 className="text-lg font-semibold text-slate-100">
                     {project.title}
                   </h3>
-                  <p className="mt-2 text-sm text-slate-400">
+                  <p className="mt-2 flex-1 text-sm text-slate-400">
                     {project.description}
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded bg-navy-950 px-2 py-1 font-mono text-xs text-cyan-400"
-                      >
-                        {tag}
-                      </span>
+                      <Badge key={tag}>{tag}</Badge>
                     ))}
                   </div>
-                  <button
-                    type="button"
-                    disabled
-                    className="mt-6 w-full rounded border border-navy-800 px-4 py-2 text-sm text-slate-400"
-                  >
-                    GitHub
-                  </button>
-                </div>
+                  {project.githubUrl ? (
+                    <LinkButton
+                      href={project.githubUrl}
+                      external
+                      variant="outline"
+                      className="mt-6"
+                      fullWidth
+                    >
+                      GitHub
+                    </LinkButton>
+                  ) : (
+                    <Button variant="outline" disabled fullWidth className="mt-6">
+                      GitHub
+                    </Button>
+                  )}
+                </Card>
               ))}
             </div>
           </div>
@@ -128,15 +90,15 @@ export default function HomePage() {
             <h2 className="text-2xl font-bold text-slate-100">Core Skills</h2>
 
             <div className="mt-10 grid gap-8 md:grid-cols-3">
-              {SKILL_GROUPS.map((group) => (
-                <div key={group.title}>
+              {SKILL_CATEGORIES.map((category) => (
+                <div key={category.title}>
                   <h3 className="font-mono text-sm text-cyan-400">
-                    {group.title}
+                    {category.title}
                   </h3>
                   <ul className="mt-3 space-y-2">
-                    {group.items.map((item) => (
-                      <li key={item} className="text-sm text-slate-400">
-                        {item}
+                    {category.skills.slice(0, 4).map((skill) => (
+                      <li key={skill.name} className="text-sm text-slate-400">
+                        {skill.name}
                       </li>
                     ))}
                   </ul>
@@ -153,18 +115,14 @@ export default function HomePage() {
               Interested in working together?
             </h2>
             <div className="mt-8">
-              <Link
-                href="/contact"
-                className="focus-ring inline-block rounded bg-cyan-400 px-8 py-3 text-sm font-semibold text-navy-950 transition-opacity hover:opacity-90"
-              >
-                Get in Touch
-              </Link>
+              <LinkButton href="/contact">Get in Touch</LinkButton>
             </div>
           </div>
         </section>
       </main>
 
       <Footer />
+      <ChatWidget />
     </div>
   );
 }

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
+import Button from "@/components/ui/Button";
 import PlaceholderBanner from "@/components/ui/PlaceholderBanner";
 
 export const metadata: Metadata = {
@@ -15,35 +18,21 @@ const STATS = [
 export default function DashboardPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
+      <PageHeader title="Dashboard" size="panel" />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {STATS.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-lg border border-navy-800 bg-navy-800 p-6"
-          >
-            <p className="text-3xl font-bold text-cyan-400">{stat.value}</p>
-            <p className="mt-1 text-sm text-slate-400">{stat.label}</p>
-          </div>
+          <StatCard key={stat.label} label={stat.label} value={stat.value} />
         ))}
       </div>
 
       <div className="mt-8 flex flex-wrap gap-4">
-        <button
-          type="button"
-          disabled
-          className="focus-ring rounded border border-navy-800 px-4 py-2 text-sm text-slate-400 opacity-60"
-        >
+        <Button variant="outline" disabled>
           + New Project
-        </button>
-        <button
-          type="button"
-          disabled
-          className="focus-ring rounded border border-navy-800 px-4 py-2 text-sm text-slate-400 opacity-60"
-        >
+        </Button>
+        <Button variant="outline" disabled>
           + New Post
-        </button>
+        </Button>
       </div>
 
       <div className="mt-10">

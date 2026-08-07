@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
+/* Lets Tailwind detect the utility classes used inside Streamdown's
+   compiled components (the AI Assistant's Markdown renderer). */
+@source "../node_modules/streamdown/dist/*.js";
+@import "streamdown/styles.css";
+
 @layer base {
   body {
     @apply bg-navy-950 text-slate-100;

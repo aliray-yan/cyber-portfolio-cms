@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import PageHeader from "@/components/ui/PageHeader";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import Button from "@/components/ui/Button";
 import { GITHUB_URL, LINKEDIN_URL, SITE_EMAIL } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -9,9 +13,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="text-3xl font-bold text-slate-100 md:text-4xl">
-        Contact
-      </h1>
+      <PageHeader title="Contact" />
 
       <div className="mt-8 flex flex-wrap gap-6 text-sm">
         <a
@@ -43,81 +45,21 @@ export default function ContactPage() {
       </p>
 
       <form className="mt-10 space-y-5">
-        <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-slate-100"
-          >
-            Name
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            disabled
-            className="focus-ring mt-2 w-full rounded border border-navy-800 bg-navy-900 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60"
-            placeholder="Your name"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-slate-100"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            disabled
-            className="focus-ring mt-2 w-full rounded border border-navy-800 bg-navy-900 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60"
-            placeholder="you@example.com"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="subject"
-            className="block text-sm font-medium text-slate-100"
-          >
-            Subject
-          </label>
-          <input
-            id="subject"
-            name="subject"
-            type="text"
-            disabled
-            className="focus-ring mt-2 w-full rounded border border-navy-800 bg-navy-900 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60"
-            placeholder="What's this about?"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="message"
-            className="block text-sm font-medium text-slate-100"
-          >
-            Message
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            rows={5}
-            disabled
-            className="focus-ring mt-2 w-full rounded border border-navy-800 bg-navy-900 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60"
-            placeholder="Your message"
-          />
-        </div>
-
-        <button
-          type="button"
+        <Input id="name" name="name" type="text" label="Name" disabled placeholder="Your name" />
+        <Input id="email" name="email" type="email" label="Email" disabled placeholder="you@example.com" />
+        <Input id="subject" name="subject" type="text" label="Subject" disabled placeholder="What's this about?" />
+        <Textarea
+          id="message"
+          name="message"
+          label="Message"
+          rows={5}
           disabled
-          className="focus-ring w-full rounded bg-cyan-400 px-6 py-3 text-sm font-semibold text-navy-950 opacity-60 md:w-auto"
-        >
+          placeholder="Your message"
+        />
+
+        <Button type="button" disabled fullWidth className="md:w-auto">
           Send Message
-        </button>
+        </Button>
 
         <p className="text-xs text-slate-400">
           Form submission coming in a future phase.

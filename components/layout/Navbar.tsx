@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { NAV_LINKS, SITE_OWNER } from "@/lib/constants";
+import NavLink from "./NavLink";
+
+const DESKTOP_LINK_CLASS = "focus-ring rounded px-3 py-2 text-sm transition-colors";
+const MOBILE_LINK_CLASS = "focus-ring block rounded px-3 py-2 text-sm transition-colors";
+const ACTIVE_CLASS = "text-cyan-400";
+const INACTIVE_CLASS = "text-slate-400 hover:text-slate-100";
 
 export default function Navbar() {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <header className="sticky top-0 z-50 border-b border-navy-800 bg-navy-950/90 backdrop-blur">
@@ -29,16 +30,14 @@ export default function Navbar() {
         <ul className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
-              <Link
+              <NavLink
                 href={link.href}
-                className={`focus-ring rounded px-3 py-2 text-sm transition-colors ${
-                  isActive(link.href)
-                    ? "text-cyan-400"
-                    : "text-slate-400 hover:text-slate-100"
-                }`}
+                className={DESKTOP_LINK_CLASS}
+                activeClassName={ACTIVE_CLASS}
+                inactiveClassName={INACTIVE_CLASS}
               >
                 {link.label}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -74,17 +73,15 @@ export default function Navbar() {
         <ul className="flex flex-col gap-1 border-t border-navy-800 px-6 pb-4 md:hidden">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
-              <Link
+              <NavLink
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`focus-ring block rounded px-3 py-2 text-sm transition-colors ${
-                  isActive(link.href)
-                    ? "text-cyan-400"
-                    : "text-slate-400 hover:text-slate-100"
-                }`}
+                className={MOBILE_LINK_CLASS}
+                activeClassName={ACTIVE_CLASS}
+                inactiveClassName={INACTIVE_CLASS}
               >
                 {link.label}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>
