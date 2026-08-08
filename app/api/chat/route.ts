@@ -5,8 +5,8 @@
  *
  * POST /api/chat  { messages: UIMessage[] }  →  streamed UIMessage response
  *
- * This is the only place in the app that touches the Anthropic client. The
- * API key (ANTHROPIC_API_KEY) is read from server-side environment
+ * This is the only place in the app that touches the OpenAI client. The
+ * API key (OPENAI_API_KEY) is read from server-side environment
  * variables only — it is never exposed to the browser. Model choice and
  * the system prompt both live in lib/ai/config.ts, not here.
  */

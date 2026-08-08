@@ -42,7 +42,7 @@ export default async function HealthCheckPage() {
     <div className="mx-auto max-w-2xl px-6 py-16">
       <h1 className="text-3xl font-bold text-slate-100">Health Check</h1>
 
-      <section className="mt-10 rounded-lg border border-navy-800 bg-navy-800 p-6">
+      <section className="mt-10 rounded-lg border border-white/10 bg-navy-800 p-6">
         <h2 className="font-mono text-sm text-cyan-400">
           Application Status
         </h2>
@@ -62,7 +62,7 @@ export default async function HealthCheckPage() {
         </dl>
       </section>
 
-      <section className="mt-6 rounded-lg border border-navy-800 bg-navy-800 p-6">
+      <section className="mt-6 rounded-lg border border-white/10 bg-navy-800 p-6">
         <h2 className="font-mono text-sm text-cyan-400">
           API Connectivity Test
         </h2>
@@ -86,7 +86,7 @@ export default async function HealthCheckPage() {
         </dl>
 
         {apiResult.success && apiResult.data && (
-          <div className="mt-4 rounded border border-navy-800 bg-navy-950 p-4">
+          <div className="mt-4 rounded border border-white/10 bg-navy-950 p-4">
             <p className="mb-2 text-xs text-slate-400">Response data</p>
             <dl className="space-y-1 text-sm">
               <div className="flex justify-between">
@@ -120,7 +120,7 @@ export default async function HealthCheckPage() {
         )}
       </section>
 
-      <section className="mt-6 rounded-lg border border-navy-800 bg-navy-800 p-6">
+      <section className="mt-6 rounded-lg border border-white/10 bg-navy-800 p-6">
         <h2 className="font-mono text-sm text-cyan-400">
           Server Component Verification
         </h2>

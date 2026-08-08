@@ -14,7 +14,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-navy-800 bg-navy-950/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-navy-950/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           href="/"
@@ -27,7 +27,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden md:flex items-center gap-1">
+        <ul className="hidden md:flex items-center gap-2">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <NavLink
@@ -70,7 +70,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <ul className="flex flex-col gap-1 border-t border-navy-800 px-6 pb-4 md:hidden">
+        <ul className="flex flex-col gap-1 border-t border-white/10 px-6 pb-4 md:hidden">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <NavLink

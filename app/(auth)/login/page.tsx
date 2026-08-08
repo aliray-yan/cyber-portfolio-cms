@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-sm rounded-lg border border-navy-800 bg-navy-900 p-8">
+      <div className="w-full max-w-sm rounded-lg border border-white/10 bg-navy-900 p-8">
         <p className="font-mono text-xs text-cyan-400">{SITE_NAME}</p>
         <h1 className="mt-2 text-2xl font-bold text-slate-100">
           Admin Login

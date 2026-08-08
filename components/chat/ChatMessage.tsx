@@ -20,7 +20,7 @@ export default function ChatMessage({ message, showThinking }: ChatMessageProps)
         className={`max-w-[85%] rounded-lg px-4 py-2.5 text-sm leading-relaxed ${
           isUser
             ? "bg-cyan-400 text-navy-950"
-            : "border border-navy-800 bg-navy-900 text-slate-100"
+            : "border border-white/10 bg-navy-900 text-slate-100"
         }`}
       >
         {/* Thinking indicator and text occupy the same cell and crossfade,

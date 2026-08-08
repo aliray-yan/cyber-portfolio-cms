@@ -22,7 +22,7 @@ export default function Input({
       <input
         id={id}
         className={cn(
-          "focus-ring mt-2 w-full rounded border border-navy-800 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60",
+          "focus-ring mt-2 w-full rounded border border-white/20 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60",
           tone === "inset" ? "bg-navy-950" : "bg-navy-900",
           className,
         )}

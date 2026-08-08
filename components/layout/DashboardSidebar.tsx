@@ -9,7 +9,7 @@ const INACTIVE_CLASS = "text-slate-400 hover:bg-navy-800 hover:text-slate-100";
 
 export default function DashboardSidebar() {
   return (
-    <aside className="w-full shrink-0 border-navy-800 bg-navy-900 md:h-screen md:w-60 md:border-r">
+    <aside className="w-full shrink-0 border-white/10 bg-navy-900 md:h-screen md:w-60 md:border-r">
       <div className="px-6 py-6">
         <p className="font-mono text-sm font-semibold text-slate-100">
           <span className="text-cyan-400">{"//"}</span> admin panel
@@ -33,7 +33,7 @@ export default function DashboardSidebar() {
           ))}
         </ul>
 
-        <div className="mx-3 my-4 border-t border-navy-800" />
+        <div className="mx-3 my-4 border-t border-white/10" />
 
         <ul className="px-3">
           <li>

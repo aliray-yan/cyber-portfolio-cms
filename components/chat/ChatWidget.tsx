@@ -86,9 +86,9 @@ export default function ChatWidget() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-40 flex h-dvh w-dvw flex-col bg-navy-950 md:inset-auto md:bottom-24 md:right-6 md:h-[32rem] md:w-96 md:rounded-lg md:border md:border-navy-800 md:shadow-2xl">
+        <div className="fixed inset-0 z-40 flex h-dvh w-dvw flex-col bg-navy-950 md:inset-auto md:bottom-24 md:right-6 md:h-[32rem] md:w-96 md:rounded-lg md:border md:border-white/10 md:shadow-2xl">
           {/* Header */}
-          <div className="flex shrink-0 items-center justify-between border-b border-navy-800 px-4 py-3">
+          <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
             <div>
               <p className="text-sm font-semibold text-slate-100">
                 Ask about Ali
@@ -101,7 +101,7 @@ export default function ChatWidget() {
               type="button"
               onClick={() => setIsOpen(false)}
               aria-label="Close chat"
-              className="focus-ring rounded p-1 text-slate-400 hover:text-slate-100"
+              className="focus-ring rounded p-2 text-slate-400 hover:text-slate-100"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -137,7 +137,7 @@ export default function ChatWidget() {
                       variant="ghost"
                       size="sm"
                       onClick={() => submitMessage(prompt)}
-                      className="justify-start border border-navy-800 text-left font-normal hover:border-cyan-400"
+                      className="justify-start border border-white/20 text-left font-normal hover:border-cyan-400"
                     >
                       {prompt}
                     </Button>
@@ -183,11 +183,11 @@ export default function ChatWidget() {
 
           {/* Jump to latest */}
           {!isPinned && (
-            <div className="flex shrink-0 justify-center border-t border-navy-800 bg-navy-950 py-1.5">
+            <div className="flex shrink-0 justify-center border-t border-white/10 bg-navy-950 py-1.5">
               <button
                 type="button"
                 onClick={scrollToBottom}
-                className="focus-ring rounded-full border border-navy-800 bg-navy-900 px-3 py-1 text-xs text-cyan-400 shadow"
+                className="focus-ring rounded-full border border-white/20 bg-navy-900 px-3 py-1 text-xs text-cyan-400 shadow"
               >
                 Jump to latest ↓
               </button>
@@ -198,15 +198,16 @@ export default function ChatWidget() {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className="flex shrink-0 items-end gap-2 border-t border-navy-800 p-3"
+            className="flex shrink-0 items-end gap-2 border-t border-white/10 p-3"
           >
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask a question..."
+              placeholder={isBusy ? "Waiting for response..." : "Ask a question..."}
               rows={1}
-              className="focus-ring max-h-24 min-h-[2.5rem] flex-1 resize-none rounded border border-navy-800 bg-navy-900 px-3 py-2 text-slate-100 placeholder:text-slate-400"
+              disabled={isBusy}
+              className="focus-ring max-h-24 min-h-[2.5rem] flex-1 resize-none rounded border border-white/20 bg-navy-900 px-3 py-2 text-slate-100 placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-60"
               style={{ fontSize: "16px" }} // 16px avoids iOS Safari auto-zoom on focus
             />
             {isBusy ? (

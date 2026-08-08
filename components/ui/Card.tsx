@@ -16,7 +16,7 @@ export function cardClasses(
   className?: string,
 ): string {
   return cn(
-    "rounded-lg border border-navy-800 bg-navy-800",
+    "rounded-lg border border-white/10 bg-navy-800",
     padding === "md" ? "p-6" : "p-4",
     interactive && "transition-colors hover:border-cyan-400",
     className,

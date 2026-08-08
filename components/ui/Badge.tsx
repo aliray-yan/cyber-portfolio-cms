@@ -6,7 +6,7 @@ type BadgeVariant = "accent" | "muted" | "outline";
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   accent: "bg-navy-950 text-cyan-400",
   muted: "bg-navy-950 text-slate-400",
-  outline: "border border-navy-800 text-slate-400",
+  outline: "border border-white/15 text-slate-400",
 };
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

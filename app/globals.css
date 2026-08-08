@@ -18,7 +18,16 @@
 }
 
 @layer utilities {
+  /* Only shows a ring for keyboard focus (Tab), not on mouse click — this
+     was previously applying permanently to every element using this class
+     (nav links, buttons, the logo, the chat toggle), which is the boxed-in
+     look across the whole site. :focus-visible is the fix, not removing
+     the ring outright — visible keyboard focus indicators are a hard
+     accessibility requirement. */
   .focus-ring {
-    @apply outline-none ring-2 ring-cyan-400/60 ring-offset-2 ring-offset-navy-950;
+    @apply outline-none;
+  }
+  .focus-ring:focus-visible {
+    @apply ring-2 ring-cyan-400/60 ring-offset-2 ring-offset-navy-950;
   }
 }

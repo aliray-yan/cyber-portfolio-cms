@@ -10,7 +10,7 @@ const FOOTER_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-navy-800">
+    <footer className="border-t border-white/10">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-10 text-sm text-slate-400 md:flex-row md:justify-between md:gap-4">
         <p>
           &copy; {new Date().getFullYear()} {SITE_OWNER}. All rights reserved.
@@ -51,7 +51,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <p className="border-t border-navy-800 py-4 text-center text-xs text-slate-400">
+      <p className="border-t border-white/10 py-4 text-center text-xs text-slate-400">
         Built with Next.js &amp; Tailwind CSS
       </p>
     </footer>

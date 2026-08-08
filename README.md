@@ -3,8 +3,7 @@
 Professional cybersecurity portfolio platform with a content management system.
 
 ## Live Demo
-[Vercel URL here]
-
+https://cyber-portfolio-cms.vercel.app/
 ## Tech Stack
 - Next.js (App Router)
 - TypeScript

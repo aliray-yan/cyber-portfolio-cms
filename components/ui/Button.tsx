@@ -10,18 +10,19 @@ import { cn } from "@/lib/utils";
  */
 
 export type ButtonVariant = "primary" | "outline" | "ghost" | "danger";
-export type ButtonSize = "sm" | "md";
+export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary: "bg-cyan-400 text-navy-950 hover:opacity-90",
-  outline: "border border-navy-800 text-slate-100 hover:border-cyan-400",
-  ghost: "text-slate-400 hover:bg-navy-800 hover:text-slate-100",
+  outline: "border border-white/20 text-slate-100 hover:border-cyan-400",
+  ghost: "text-slate-400 hover:bg-white/5 hover:text-slate-100",
   danger: "bg-coral-500 text-navy-950 hover:opacity-90",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: "px-3 py-1.5 text-xs",
-  md: "px-4 py-2 text-sm",
+  md: "px-4 py-3 text-sm",
+  lg: "px-6 py-3 text-base",
 };
 
 export function buttonClasses(
