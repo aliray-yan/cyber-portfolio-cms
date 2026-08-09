@@ -10,63 +10,99 @@
  *
  * PROVIDER
  * --------
- * We use OpenAI directly via the AI SDK's `@ai-sdk/openai` provider. The
- * API key is read server-side only, from process.env.OPENAI_API_KEY — it
- * is never sent to the client. Note: the assignment brief's example and
- * linked docs are written around Claude/Anthropic specifically — the AI SDK
- * pattern (streamText, useChat, message parts) is identical either way, but
- * flag this choice if a rubric or reviewer asks which provider was used.
+ * We use OpenRouter via the official `@openrouter/ai-sdk-provider` package.
+ * OpenRouter is an OpenAI-compatible gateway that proxies to 300+ models
+ * from many labs (Meta, Google, Alibaba, Anthropic, etc.) behind one API
+ * key, including a rotating set of genuinely free `:free`-suffixed models.
+ * The API key is read server-side only, from process.env.OPENROUTER_API_KEY
+ * — it is never sent to the client.
  *
- * SWAPPING PROVIDERS
- * -------------------
- * Because the AI SDK abstracts providers behind a common interface, moving
- * back to Anthropic (or any other provider) later is a two-line change and
- * nothing else in the app needs to know:
+ * Get a free key: sign up at https://openrouter.ai (no card required),
+ * then create a key at https://openrouter.ai/keys.
  *
- *   import { anthropic } from "@ai-sdk/anthropic";
- *   export const chatModel = anthropic("claude-haiku-4-5-20251001");
+ * FREE MODEL CAVEATS — read before demoing/submitting
+ * -----------------------------------------------------
+ * - Free (`:free`) models are rate-limited, not credit-limited: roughly
+ *   20 requests/minute, and 50 requests/day on a $0 balance (rising to
+ *   1,000/day once you've ever bought $10 of credits — you don't have to
+ *   spend it, just having bought it once raises the daily cap). If the
+ *   widget suddenly starts erroring during a demo, you've likely hit the
+ *   daily cap — check https://openrouter.ai/activity.
+ * - The free model lineup rotates weekly as providers add/remove capacity.
+ *   MODEL_ID below was verified live against OpenRouter's models API as of
+ *   this edit, but if it 404s later, pick a replacement from
+ *   https://openrouter.ai/models?max_price=0 (filter already applied by
+ *   that URL) and swap the string below — nothing else needs to change.
  *
- * (Remember to also add ANTHROPIC_API_KEY to .env.local / Vercel env vars,
- * and `npm install @ai-sdk/anthropic`.)
+ * SWAPPING PROVIDERS / MODELS
+ * -----------------------------
+ * Any OpenRouter model — free or paid — is a one-line change:
+ *
+ *   export const chatModel = openrouter("meta-llama/llama-3.3-70b-instruct");
+ *
+ * Moving off OpenRouter entirely (e.g. back to OpenAI or Anthropic direct)
+ * is a two-line change plus a new API key env var:
+ *
+ *   import { openai } from "@ai-sdk/openai";
+ *   export const chatModel = openai("gpt-4.1-mini");
  */
 
-import { openai } from "@ai-sdk/openai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { SITE_OWNER, SITE_TAGLINE } from "@/lib/constants";
 import { PROJECTS } from "@/lib/data/projects";
 import { CERTIFICATIONS } from "@/lib/data/certifications";
 import { SKILL_CATEGORIES } from "@/lib/data/skills";
 import { EXPERIENCE } from "@/lib/data/experience";
 
+const openrouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  // Shows up in OpenRouter's dashboard/rankings as the calling app —
+  // optional, but nice for telling this app's traffic apart from others
+  // using the same key.
+  headers: {
+    "HTTP-Referer": "https://aliray-yan.github.io/Portfolio/",
+    "X-Title": "Cyber Portfolio CMS - AI Assistant",
+  },
+});
+
 /**
  * Model selection.
  *
- * GPT-4.1 mini, not a GPT-5-family model — deliberately. GPT-5/mini/nano
- * are reasoning models: they reject any non-default `temperature`, and
- * more importantly they can spend their entire output token budget on
- * internal reasoning and return a genuinely empty response to the user —
- * a well-documented failure mode, not an edge case. None of that
- * complexity earns its keep for a portfolio Q&A widget. GPT-4.1 mini has
- * no reasoning step, responds fast, and is still fully available via the
- * API (only ChatGPT's consumer app dropped it, not the API).
+ * inclusionai/ling-3.0-tiny:free — a small (1.3B active / 7.9B total
+ * parameter MoE) instruction-tuned model from InclusionAI, explicitly
+ * positioned for "responsive agents, instruction following, and multi-turn
+ * conversations" — a good match for a low-latency chat widget. $0/token,
+ * 262K context window.
+ *
+ * Reasoning is explicitly disabled below (providerOptions.openrouter.
+ * reasoning.enabled = false). This model supports a reasoning/thinking mode
+ * that's ON by default — left on, it risks the exact failure mode already
+ * documented for GPT-5 in this file's git history: the model can spend its
+ * whole output budget on invisible reasoning tokens and return an empty
+ * response. Turning it off keeps behavior fast and predictable for a
+ * portfolio Q&A widget, which doesn't need chain-of-thought.
  */
-const MODEL_ID = "gpt-4.1-mini";
-// const MODEL_ID = "gpt-4.1-nano"; // cheapest, fastest, lower quality
-// const MODEL_ID = "gpt-5-mini"; // higher quality, but see the note above —
-// requires removing `temperature` below and adding a `reasoning_effort` /
-// providerOptions config to avoid empty responses.
+const MODEL_ID = "inclusionai/ling-3.0-tiny:free";
+// const MODEL_ID = "nvidia/nemotron-3-ultra-550b-a55b:free"; // free, much larger (55B active), 1M context, more capable but noticeably slower
+// const MODEL_ID = "cohere/north-mini-code:free"; // free, no reasoning by default, coding-leaning
+// Paid fallback if free-tier rate limits become a problem before a demo:
+// const MODEL_ID = "meta-llama/llama-3.3-70b-instruct"; // fractions of a cent per message
 
-export const chatModel = openai(MODEL_ID);
+export const chatModel = openrouter(MODEL_ID);
 
 /**
  * Generation settings.
  * Kept conservative and separate from the model id so they're easy to tune
- * without touching the provider wiring above. (GPT-4.1 mini supports
- * temperature normally — this restriction only applies to the GPT-5
- * reasoning family, see the note above.)
+ * without touching the provider wiring above.
  */
 export const chatSettings = {
   temperature: 0.6,
   maxOutputTokens: 800,
+  providerOptions: {
+    openrouter: {
+      reasoning: { enabled: false },
+    },
+  },
 };
 
 /**
