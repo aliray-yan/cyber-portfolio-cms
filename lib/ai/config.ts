@@ -68,23 +68,19 @@ const openrouter = createOpenRouter({
 /**
  * Model selection.
  *
- * inclusionai/ling-3.0-tiny:free — a small (1.3B active / 7.9B total
- * parameter MoE) instruction-tuned model from InclusionAI, explicitly
- * positioned for "responsive agents, instruction following, and multi-turn
- * conversations" — a good match for a low-latency chat widget. $0/token,
- * 262K context window.
+ * google/gemma-4-26b-a4b-it:free — Google DeepMind's Gemma 4, MoE variant
+ * (25.2B total params, 3.8B active per token). Released April 2026. Free,
+ * $0/token, 262K context, multimodal (text/image/video input).
  *
- * Reasoning is explicitly disabled below (providerOptions.openrouter.
- * reasoning.enabled = false). This model supports a reasoning/thinking mode
- * that's ON by default — left on, it risks the exact failure mode already
- * documented for GPT-5 in this file's git history: the model can spend its
- * whole output budget on invisible reasoning tokens and return an empty
- * response. Turning it off keeps behavior fast and predictable for a
- * portfolio Q&A widget, which doesn't need chain-of-thought.
+ * Reasoning here is "configurable," not on-by-default like ling-3.0-tiny
+ * was — OpenRouter's own examples only enable it by explicitly passing
+ * `reasoning: {enabled: true}`. The explicit `enabled: false` below is
+ * belt-and-suspenders: harmless if the default is already off, and keeps
+ * this file self-documenting/safe if that default ever changes upstream.
  */
-const MODEL_ID = "inclusionai/ling-3.0-tiny:free";
+const MODEL_ID = "google/gemma-4-26b-a4b-it:free";
+// const MODEL_ID = "inclusionai/ling-3.0-tiny:free"; // smaller/faster, reasoning ON by default (disabled below)
 // const MODEL_ID = "nvidia/nemotron-3-ultra-550b-a55b:free"; // free, much larger (55B active), 1M context, more capable but noticeably slower
-// const MODEL_ID = "cohere/north-mini-code:free"; // free, no reasoning by default, coding-leaning
 // Paid fallback if free-tier rate limits become a problem before a demo:
 // const MODEL_ID = "meta-llama/llama-3.3-70b-instruct"; // fractions of a cent per message
 
