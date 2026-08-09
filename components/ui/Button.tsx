@@ -13,16 +13,16 @@ export type ButtonVariant = "primary" | "outline" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "bg-cyan-400 text-navy-950 hover:opacity-90",
-  outline: "border border-white/20 text-slate-100 hover:border-cyan-400",
-  ghost: "text-slate-400 hover:bg-white/5 hover:text-slate-100",
-  danger: "bg-coral-500 text-navy-950 hover:opacity-90",
+  primary: "bg-primary text-primary-foreground hover:opacity-90",
+  outline: "border border-border text-foreground hover:border-primary",
+  ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
+  danger: "bg-destructive text-destructive-foreground hover:opacity-90",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: "px-3 py-1.5 text-xs",
-  md: "px-4 py-3 text-sm",
-  lg: "px-6 py-3 text-base",
+  sm: "px-4 py-1.5 text-xs",
+  md: "px-5 py-3 text-sm",
+  lg: "px-7 py-3.5 text-base",
 };
 
 export function buttonClasses(
@@ -32,7 +32,7 @@ export function buttonClasses(
   className?: string,
 ): string {
   return cn(
-    "focus-ring inline-flex items-center justify-center gap-2 rounded font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40",
+    "focus-ring inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40",
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
     fullWidth && "w-full",

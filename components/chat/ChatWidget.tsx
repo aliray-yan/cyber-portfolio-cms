@@ -52,7 +52,7 @@ export default function ChatWidget() {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-label={isOpen ? "Close AI assistant" : "Open AI assistant"}
-        className="focus-ring fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-cyan-400 text-navy-950 shadow-lg shadow-cyan-400/30 transition-transform hover:scale-105"
+        className="focus-ring fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-105"
       >
         {isOpen ? (
           <svg
@@ -86,14 +86,14 @@ export default function ChatWidget() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-40 flex h-dvh w-dvw flex-col bg-navy-950 md:inset-auto md:bottom-24 md:right-6 md:h-[32rem] md:w-96 md:rounded-lg md:border md:border-white/10 md:shadow-2xl">
+        <div className="fixed inset-0 z-40 flex h-dvh w-dvw flex-col bg-background md:inset-auto md:bottom-24 md:right-6 md:h-[32rem] md:w-96 md:rounded-3xl md:border md:border-border md:shadow-2xl">
           {/* Header */}
-          <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+          <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-slate-100">
+              <p className="text-sm font-semibold text-foreground">
                 Ask about Ali
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Projects, skills &amp; cybersecurity Q&amp;A
               </p>
             </div>
@@ -101,7 +101,7 @@ export default function ChatWidget() {
               type="button"
               onClick={() => setIsOpen(false)}
               aria-label="Close chat"
-              className="focus-ring rounded p-2 text-slate-400 hover:text-slate-100"
+              className="focus-ring rounded p-2 text-muted-foreground hover:text-foreground"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +125,7 @@ export default function ChatWidget() {
           >
             {messages.length === 0 && (
               <div className="space-y-3">
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-muted-foreground">
                   Ask me anything about Ali&apos;s projects, skills, or
                   cybersecurity in general.
                 </p>
@@ -137,7 +137,7 @@ export default function ChatWidget() {
                       variant="ghost"
                       size="sm"
                       onClick={() => submitMessage(prompt)}
-                      className="justify-start border border-white/20 text-left font-normal hover:border-cyan-400"
+                      className="justify-start border border-border text-left font-normal hover:border-primary"
                     >
                       {prompt}
                     </Button>
@@ -168,7 +168,7 @@ export default function ChatWidget() {
             })}
 
             {error && (
-              <div className="rounded-lg border border-coral-500/30 bg-navy-900 px-4 py-2.5 text-xs text-coral-500">
+              <div className="rounded-xl border border-destructive/30 bg-card px-4 py-2.5 text-xs text-destructive">
                 Something went wrong reaching the assistant.{" "}
                 <button
                   type="button"
@@ -183,11 +183,11 @@ export default function ChatWidget() {
 
           {/* Jump to latest */}
           {!isPinned && (
-            <div className="flex shrink-0 justify-center border-t border-white/10 bg-navy-950 py-1.5">
+            <div className="flex shrink-0 justify-center border-t border-border bg-background py-1.5">
               <button
                 type="button"
                 onClick={scrollToBottom}
-                className="focus-ring rounded-full border border-white/20 bg-navy-900 px-3 py-1 text-xs text-cyan-400 shadow"
+                className="focus-ring rounded-full border border-border bg-card px-3 py-1 text-xs text-primary shadow"
               >
                 Jump to latest ↓
               </button>
@@ -198,7 +198,7 @@ export default function ChatWidget() {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className="flex shrink-0 items-end gap-2 border-t border-white/10 p-3"
+            className="flex shrink-0 items-end gap-2 border-t border-border p-3"
           >
             <textarea
               value={input}
@@ -207,7 +207,7 @@ export default function ChatWidget() {
               placeholder={isBusy ? "Waiting for response..." : "Ask a question..."}
               rows={1}
               disabled={isBusy}
-              className="focus-ring max-h-24 min-h-[2.5rem] flex-1 resize-none rounded border border-white/20 bg-navy-900 px-3 py-2 text-slate-100 placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="focus-ring max-h-24 min-h-[2.5rem] flex-1 resize-none rounded-xl border border-border bg-card px-3 py-2 text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60"
               style={{ fontSize: "16px" }} // 16px avoids iOS Safari auto-zoom on focus
             />
             {isBusy ? (

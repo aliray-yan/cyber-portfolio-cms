@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-sm rounded-lg border border-white/10 bg-navy-900 p-8">
-        <p className="font-mono text-xs text-cyan-400">{SITE_NAME}</p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-100">
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8">
+        <p className="font-semibold uppercase tracking-wide text-xs text-primary">{SITE_NAME}</p>
+        <h1 className="font-display mt-2 text-2xl uppercase text-foreground">
           Admin Login
         </h1>
 
@@ -42,7 +42,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           Authentication coming in Phase 4.
         </p>
       </div>

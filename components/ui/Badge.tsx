@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 type BadgeVariant = "accent" | "muted" | "outline";
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
-  accent: "bg-navy-950 text-cyan-400",
-  muted: "bg-navy-950 text-slate-400",
-  outline: "border border-white/15 text-slate-400",
+  accent: "bg-primary text-primary-foreground",
+  muted: "bg-muted text-muted-foreground",
+  outline: "border border-border text-muted-foreground",
 };
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -23,7 +23,7 @@ export default function Badge({
   return (
     <span
       className={cn(
-        "inline-block rounded px-2 py-1 font-mono text-xs",
+        "inline-block rounded-full px-3 py-1 text-xs font-medium tracking-wide",
         VARIANT_CLASSES[variant],
         className,
       )}

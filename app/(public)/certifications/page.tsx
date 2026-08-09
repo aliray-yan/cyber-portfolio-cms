@@ -27,8 +27,8 @@ export default function CertificationsPage() {
       <div className="mt-10 space-y-4">
         {CERTIFICATIONS.map((cert) => (
           <Card key={cert.name}>
-            <p className="font-semibold text-slate-100">{cert.name}</p>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="font-semibold text-foreground">{cert.name}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
               Issuer: {cert.issuer} &middot; Completed: {cert.year}
             </p>
           </Card>

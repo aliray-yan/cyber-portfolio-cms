@@ -13,11 +13,11 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <p className="font-mono text-sm text-cyan-400">Article</p>
+      <p className="font-semibold uppercase tracking-wide text-sm text-primary">Article</p>
       <PageHeader title={post?.title ?? slug} className="mt-2" />
 
       {post && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>{post.date}</span>
           {post.tags.map((tag) => (
             <Badge key={tag}>{tag}</Badge>
@@ -32,7 +32,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         />
       </div>
 
-      <article className="mt-10 max-w-none leading-relaxed text-slate-400">
+      <article className="mt-10 max-w-none leading-relaxed text-muted-foreground">
         <p>
           {post?.excerpt ??
             "This article's full content will be rendered here once the blog CMS is connected in a future phase."}{" "}

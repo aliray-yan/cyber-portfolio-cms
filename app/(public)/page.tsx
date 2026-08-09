@@ -13,14 +13,14 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-        <p className="mb-4 font-mono text-sm text-cyan-400">
+        <p className="mb-4 font-semibold uppercase tracking-wide text-sm text-primary">
           Hi, I&apos;m {SITE_OWNER}
         </p>
-        <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-slate-100 md:text-6xl">
+        <h1 className="font-display max-w-3xl text-4xl uppercase leading-[1.05] tracking-tight text-foreground md:text-6xl">
           Cybersecurity Student{" "}
-          <span className="text-cyan-400">&amp;&nbsp;Frontend AI Engineer</span>
+          <span className="text-primary">&amp;&nbsp;Frontend AI Engineer</span>
         </h1>
-        <p className="mt-6 max-w-xl text-lg text-slate-400">
+        <p className="mt-6 max-w-xl text-lg text-muted-foreground">
           SOC analyst intern building Wazuh and Sentinel detections,
           FortiGate log pipelines, phishing analysis, and the automation
           that turns raw alerts into analyst-ready context.
@@ -36,27 +36,29 @@ export default function HomePage() {
       </section>
 
       {/* Featured Projects */}
-      <section className="border-t border-white/10 bg-navy-900/40">
+      <section className="border-t border-border bg-muted/40">
         <div className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-2xl font-bold text-slate-100">
+          <h2 className="font-display text-2xl uppercase text-foreground">
             Featured Projects
           </h2>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             Projects will be loaded from the CMS in a future phase.
           </p>
 
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {featuredProjects.map((project) => (
               <Card key={project.slug} className="flex flex-col">
-                <h3 className="text-lg font-semibold text-slate-100">
+                <h3 className="text-lg font-semibold text-foreground">
                   {project.title}
                 </h3>
-                <p className="mt-2 flex-1 text-sm text-slate-400">
+                <p className="mt-2 flex-1 text-sm text-muted-foreground">
                   {project.description}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
-                    <Badge key={tag}>{tag}</Badge>
+                    <Badge key={tag} variant="muted">
+                      {tag}
+                    </Badge>
                   ))}
                 </div>
                 {project.githubUrl ? (
@@ -81,19 +83,19 @@ export default function HomePage() {
       </section>
 
       {/* Skills Preview */}
-      <section className="border-t border-white/10">
+      <section className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-2xl font-bold text-slate-100">Core Skills</h2>
+          <h2 className="font-display text-2xl uppercase text-foreground">Core Skills</h2>
 
           <div className="mt-10 grid gap-8 md:grid-cols-3">
             {SKILL_CATEGORIES.map((category) => (
               <div key={category.title}>
-                <h3 className="font-mono text-sm text-cyan-400">
+                <h3 className="font-semibold uppercase tracking-wide text-sm text-primary">
                   {category.title}
                 </h3>
                 <ul className="mt-3 space-y-2">
                   {category.skills.slice(0, 4).map((skill) => (
-                    <li key={skill.name} className="text-sm text-slate-400">
+                    <li key={skill.name} className="text-sm text-muted-foreground">
                       {skill.name}
                     </li>
                   ))}
@@ -105,9 +107,9 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-white/10 bg-navy-900/40">
+      <section className="border-t border-border bg-muted/40">
         <div className="mx-auto max-w-6xl px-6 py-20 text-center">
-          <h2 className="text-2xl font-bold text-slate-100 md:text-3xl">
+          <h2 className="font-display text-2xl uppercase text-foreground md:text-3xl">
             Interested in working together?
           </h2>
           <div className="mt-8">

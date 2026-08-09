@@ -28,16 +28,16 @@ export default function BlogPage() {
       <div className="mt-10 space-y-6">
         {BLOG_POSTS.map((post) => (
           <CardLink key={post.slug} href={`/blog/${post.slug}`}>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span>{post.date}</span>
               {post.tags.map((tag) => (
                 <Badge key={tag}>{tag}</Badge>
               ))}
             </div>
-            <h2 className="mt-3 text-lg font-semibold text-slate-100">
+            <h2 className="mt-3 text-lg font-semibold text-foreground">
               {post.title}
             </h2>
-            <p className="mt-2 text-sm text-slate-400">{post.excerpt}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
           </CardLink>
         ))}
       </div>

@@ -3,16 +3,16 @@
 import { DASHBOARD_LINKS } from "@/lib/constants";
 import NavLink from "./NavLink";
 
-const LINK_CLASS = "focus-ring block rounded px-3 py-2 text-sm transition-colors";
-const ACTIVE_CLASS = "bg-navy-800 text-cyan-400";
-const INACTIVE_CLASS = "text-slate-400 hover:bg-navy-800 hover:text-slate-100";
+const LINK_CLASS = "focus-ring block rounded-full px-4 py-2 text-sm transition-colors";
+const ACTIVE_CLASS = "bg-muted text-primary";
+const INACTIVE_CLASS = "text-muted-foreground hover:bg-muted hover:text-foreground";
 
 export default function DashboardSidebar() {
   return (
-    <aside className="w-full shrink-0 border-white/10 bg-navy-900 md:h-screen md:w-60 md:border-r">
+    <aside className="w-full shrink-0 border-border bg-card md:h-screen md:w-60 md:border-r">
       <div className="px-6 py-6">
-        <p className="font-mono text-sm font-semibold text-slate-100">
-          <span className="text-cyan-400">{"//"}</span> admin panel
+        <p className="text-sm font-semibold text-foreground">
+          <span className="text-primary">&bull;</span> Admin Panel
         </p>
       </div>
 
@@ -33,7 +33,7 @@ export default function DashboardSidebar() {
           ))}
         </ul>
 
-        <div className="mx-3 my-4 border-t border-white/10" />
+        <div className="mx-3 my-4 border-t border-border" />
 
         <ul className="px-3">
           <li>

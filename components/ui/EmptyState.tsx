@@ -9,11 +9,11 @@ export default function EmptyState({ message, className }: EmptyStateProps) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-dashed border-white/15 p-12 text-center",
+        "rounded-2xl border border-dashed border-border p-12 text-center",
         className,
       )}
     >
-      <p className="text-sm text-slate-400">{message}</p>
+      <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );
 }

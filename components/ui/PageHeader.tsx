@@ -22,13 +22,13 @@ export default function PageHeader({
       <div>
         <h1
           className={cn(
-            "font-bold text-slate-100",
-            size === "page" ? "text-3xl md:text-4xl" : "text-2xl",
+            "font-display uppercase leading-tight text-foreground",
+            size === "page" ? "text-3xl md:text-4xl" : "text-xl",
           )}
         >
           {title}
         </h1>
-        {subtitle && <p className="mt-2 text-slate-400">{subtitle}</p>}
+        {subtitle && <p className="mt-3 text-muted-foreground">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

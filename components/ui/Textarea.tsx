@@ -16,14 +16,14 @@ export default function Textarea({
 }: TextareaProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-100">
+      <label htmlFor={id} className="block text-sm font-medium text-foreground">
         {label}
       </label>
       <textarea
         id={id}
         className={cn(
-          "focus-ring mt-2 w-full rounded border border-white/20 px-4 py-2 text-sm text-slate-100 placeholder:text-slate-400 disabled:opacity-60",
-          tone === "inset" ? "bg-navy-950" : "bg-navy-900",
+          "focus-ring mt-2 w-full rounded-xl border border-border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground disabled:opacity-60",
+          tone === "inset" ? "bg-background" : "bg-card",
           className,
         )}
         {...rest}

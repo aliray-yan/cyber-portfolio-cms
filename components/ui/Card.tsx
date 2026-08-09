@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 /**
  * components/ui/Card.tsx
  * ─────────────────────────────────────────────────────────────────────────
- * The bordered navy-800 container used for project cards, certification
- * cards, skill rows, dashboard stat cards, and settings sections. For a
- * card that's also a link (blog post cards), use CardLink — both share
+ * The bordered card surface used for project cards, certification cards,
+ * skill rows, dashboard stat cards, and settings sections. For a card
+ * that's also a link (blog post cards), use CardLink — both share
  * cardClasses() so they stay visually identical.
  */
 
@@ -16,9 +16,9 @@ export function cardClasses(
   className?: string,
 ): string {
   return cn(
-    "rounded-lg border border-white/10 bg-navy-800",
+    "rounded-2xl border border-border bg-card",
     padding === "md" ? "p-6" : "p-4",
-    interactive && "transition-colors hover:border-cyan-400",
+    interactive && "transition-colors hover:border-primary",
     className,
   );
 }

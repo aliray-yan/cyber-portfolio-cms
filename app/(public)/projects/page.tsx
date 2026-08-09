@@ -30,10 +30,10 @@ export default function ProjectsPage() {
         {PROJECTS.map((project) => (
           <Card key={project.slug} className="flex flex-col">
             <Badge className="w-fit">{project.category}</Badge>
-            <h2 className="mt-4 text-lg font-semibold text-slate-100">
+            <h2 className="mt-4 text-lg font-semibold text-foreground">
               {project.title}
             </h2>
-            <p className="mt-2 flex-1 text-sm text-slate-400">
+            <p className="mt-2 flex-1 text-sm text-muted-foreground">
               {project.description}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">

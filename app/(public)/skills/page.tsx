@@ -16,17 +16,17 @@ export default function SkillsPage() {
       <div className="mt-10 grid gap-8 md:grid-cols-3">
         {SKILL_CATEGORIES.map((category) => (
           <div key={category.title}>
-            <h2 className="font-mono text-sm text-cyan-400">
+            <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">
               {category.title}
             </h2>
             <ul className="mt-4 space-y-3">
               {category.skills.map((skill) => (
                 <li key={skill.name}>
                   <Card padding="sm">
-                    <p className="text-sm font-medium text-slate-100">
+                    <p className="text-sm font-medium text-foreground">
                       {skill.name}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {skill.level}
                     </p>
                   </Card>
