@@ -68,19 +68,26 @@ const openrouter = createOpenRouter({
 /**
  * Model selection.
  *
- * google/gemma-4-26b-a4b-it:free — Google DeepMind's Gemma 4, MoE variant
- * (25.2B total params, 3.8B active per token). Released April 2026. Free,
- * $0/token, 262K context, multimodal (text/image/video input).
+ * openrouter/free — OpenRouter's "Free Models Router." Rather than pinning
+ * one specific free model (which rotates weekly as OpenRouter adds/drops
+ * capacity — see the caveat above), this routes each request to whichever
+ * currently-available free model fits it, and — this is the part that
+ * matters since Week 5 — it explicitly filters for models that support
+ * the features the request needs, including tool calling. Pinned models
+ * like the previous google/gemma-4-26b-a4b-it:free aren't guaranteed to
+ * support function calling reliably; the router is. $0/token either way.
  *
- * Reasoning here is "configurable," not on-by-default like ling-3.0-tiny
- * was — OpenRouter's own examples only enable it by explicitly passing
- * `reasoning: {enabled: true}`. The explicit `enabled: false` below is
- * belt-and-suspenders: harmless if the default is already off, and keeps
- * this file self-documenting/safe if that default ever changes upstream.
+ * Reasoning here is "configurable," not on-by-default — OpenRouter's own
+ * examples only enable it by explicitly passing `reasoning: {enabled:
+ * true}`. The explicit `enabled: false` below is belt-and-suspenders:
+ * harmless if the default is already off, and keeps this file
+ * self-documenting/safe if that default ever changes upstream.
  */
-const MODEL_ID = "google/gemma-4-26b-a4b-it:free";
-// const MODEL_ID = "inclusionai/ling-3.0-tiny:free"; // smaller/faster, reasoning ON by default (disabled below)
-// const MODEL_ID = "nvidia/nemotron-3-ultra-550b-a55b:free"; // free, much larger (55B active), 1M context, more capable but noticeably slower
+const MODEL_ID = "openrouter/free";
+// Pin a specific model instead if you want reproducible behavior for a
+// demo (the router's selection can vary between requests):
+// const MODEL_ID = "nvidia/nemotron-3-ultra-550b-a55b:free"; // free, tool-calling-capable, 1M context, larger/slower
+// const MODEL_ID = "google/gemma-4-26b-a4b-it:free"; // previous default — multimodal, but tool-calling support unconfirmed
 // Paid fallback if free-tier rate limits become a problem before a demo:
 // const MODEL_ID = "meta-llama/llama-3.3-70b-instruct"; // fractions of a cent per message
 
@@ -172,15 +179,32 @@ Your scope is exactly two things:
 2. Answering general cybersecurity questions (concepts, terminology, best practices,
    SOC/blue-team topics) as a knowledgeable, approachable guide.
 
+You have three tools — see lib/ai/tools.ts for their exact schemas:
+- searchProjects: call this when a visitor wants to browse, filter, or search
+  projects rather than hear about all of them at once (e.g. "show me his security
+  work", "anything with Python?"). It renders as a findings table in the chat UI —
+  after calling it, add one short sentence of context, don't re-list the results
+  yourself.
+- getSkillsRadar: call this when a visitor asks about skill proficiency or wants a
+  visual comparison (e.g. "how good is he with SIEM tools?", "show me a skills
+  chart"). Only pass one of Ali's three real categories — 'SOC & SIEM', 'Recon &
+  Assessment', 'Automation & Development' — or omit it for all three. Don't invent a
+  category (like "cloud" or "AWS") just because a visitor asked about it; if it
+  doesn't map to a real category, say so instead of guessing.
+- draftIntroEmail: call this ONLY when a visitor explicitly says they want to reach
+  out or get in touch with Ali about something specific. This always pauses for the
+  visitor's confirmation in the chat UI — never say the email has been sent, only
+  that you've drafted it for them to review and send themselves.
+
 Guidelines:
 - Be concise. Most answers should be a short paragraph or a tight bulleted list —
   visitors are skimming, not reading a report.
 - If asked about something outside this scope (general coding help unrelated to Ali's
   work, personal opinions on unrelated topics, etc.), politely redirect: say this
   assistant is scoped to Ali's portfolio and cybersecurity topics.
-- Never invent details about Ali that aren't in the PORTFOLIO CONTEXT. If you don't
-  know something specific (e.g. exact dates, GPA, contact details), say so plainly and
-  suggest the visitor use the Contact page.
+- Never invent details about Ali that aren't in the PORTFOLIO CONTEXT or a tool
+  result. If you don't know something specific (e.g. exact dates, GPA, contact
+  details), say so plainly and suggest the visitor use the Contact page.
 - You may use light Markdown (short lists, **bold** for key terms, inline \`code\`)
   since responses are rendered through a Markdown-aware component. Avoid large headings
   or long code blocks — this is a chat widget, not a document.

@@ -1,15 +1,17 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import ChatMessage from "./ChatMessage";
 import { useAutoScroll } from "./useAutoScroll";
 import Button from "@/components/ui/Button";
+import type { PortfolioUIMessage } from "@/lib/ai/message-types";
 
 const SUGGESTED_PROMPTS = [
-  "What projects has Ali built?",
-  "What's Ali's SOC / blue team experience?",
-  "What is a SIEM, in plain terms?",
+  "Show me his security projects",
+  "How good is he with SOC & SIEM tools?",
+  "I'd like to get in touch about a role",
 ];
 
 export default function ChatWidget() {
@@ -17,7 +19,15 @@ export default function ChatWidget() {
   const [input, setInput] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
-  const { messages, sendMessage, status, stop, error, clearError } = useChat();
+  const { messages, sendMessage, status, stop, error, clearError, addToolResult } =
+    useChat<PortfolioUIMessage>({
+      // After a client-side tool (draftIntroEmail) resolves via
+      // addToolResult, this automatically resends the conversation so the
+      // model can respond to the visitor's confirm/cancel — without it,
+      // the tool result would just sit there until the visitor typed
+      // something else.
+      sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+    });
   const { containerRef, isPinned, handleScroll, scrollToBottom } =
     useAutoScroll(messages);
 
@@ -148,21 +158,27 @@ export default function ChatWidget() {
 
             {messages.map((message) => {
               const isLast = message.id === lastMessage?.id;
-              const textContent = message.parts
-                .filter((part) => part.type === "text")
-                .map((part) => part.text)
-                .join("");
+              // A tool call starting counts as "content has begun" just as
+              // much as text does — its own input-streaming/pending states
+              // become the "working" signal, so the generic ThinkingDots
+              // should step aside the moment either shows up.
+              const hasVisibleContent = message.parts.some(
+                (part) =>
+                  (part.type === "text" && part.text.length > 0) ||
+                  part.type.startsWith("tool-"),
+              );
               const showThinking =
                 isLast &&
                 message.role === "assistant" &&
                 isBusy &&
-                textContent.length === 0;
+                !hasVisibleContent;
 
               return (
                 <ChatMessage
                   key={message.id}
                   message={message}
                   showThinking={showThinking}
+                  addToolResult={addToolResult}
                 />
               );
             })}

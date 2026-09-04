@@ -15,11 +15,13 @@
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
+  stepCountIs,
   streamText,
   toUIMessageStream,
   type UIMessage,
 } from "ai";
 import { chatModel, chatSettings, SYSTEM_PROMPT } from "@/lib/ai/config";
+import { portfolioTools } from "@/lib/ai/tools";
 
 // Streamed responses shouldn't be cached, and can run a little longer than
 // a typical API route while the model is generating.
@@ -32,7 +34,14 @@ export async function POST(req: Request) {
   const result = streamText({
     model: chatModel,
     system: SYSTEM_PROMPT,
-    messages: await convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages, { tools: portfolioTools }),
+    tools: portfolioTools,
+    // Default stopWhen is a single step. Tool calls need at least one more
+    // step after the tool result comes back so the model can turn a
+    // findings table / chart into a short, human sentence instead of
+    // ending its turn right after the tool call. 5 gives headroom for a
+    // visitor question that touches more than one tool in a single turn.
+    stopWhen: stepCountIs(5),
     ...chatSettings,
   });
 
