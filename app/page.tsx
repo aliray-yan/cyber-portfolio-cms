@@ -22,7 +22,7 @@ export default function HomePage() {
           <p className="mb-4 font-mono text-sm text-cyan-400">
             Hi, I&apos;m {SITE_OWNER}
           </p>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-slate-100 md:text-6xl">
+          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight  md:text-6xl">
             Cybersecurity Student &amp;{" "}
             <span className="text-cyan-400">Frontend AI Engineer</span>
           </h1>
@@ -42,7 +42,7 @@ export default function HomePage() {
         {/* Featured Projects */}
         <section className="border-t border-navy-800 bg-navy-900/40">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <h2 className="text-2xl font-bold text-slate-100">
+            <h2 className="text-2xl font-bold ">
               Featured Projects
             </h2>
             <p className="mt-2 text-sm text-slate-400">
@@ -52,7 +52,7 @@ export default function HomePage() {
             <div className="mt-10 grid gap-6 md:grid-cols-3">
               {featuredProjects.map((project) => (
                 <Card key={project.slug} className="flex flex-col">
-                  <h3 className="text-lg font-semibold text-slate-100">
+                  <h3 className="text-lg font-semibold ">
                     {project.title}
                   </h3>
                   <p className="mt-2 flex-1 text-sm text-slate-400">
@@ -87,7 +87,7 @@ export default function HomePage() {
         {/* Skills Preview */}
         <section className="border-t border-navy-800">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <h2 className="text-2xl font-bold text-slate-100">Core Skills</h2>
+            <h2 className="text-2xl font-bold">Core Skills</h2>
 
             <div className="mt-10 grid gap-8 md:grid-cols-3">
               {SKILL_CATEGORIES.map((category) => (
@@ -111,7 +111,7 @@ export default function HomePage() {
         {/* CTA */}
         <section className="border-t border-navy-800 bg-navy-900/40">
           <div className="mx-auto max-w-6xl px-6 py-20 text-center">
-            <h2 className="text-2xl font-bold text-slate-100 md:text-3xl">
+            <h2 className="text-2xl font-bold  md:text-3xl">
               Interested in working together?
             </h2>
             <div className="mt-8">
