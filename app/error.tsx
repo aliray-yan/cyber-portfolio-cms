@@ -34,7 +34,7 @@ export default function RouteError({
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-background px-6 text-center">
       <p className="font-mono text-xs uppercase tracking-widest text-primary">Error</p>
-      <h1 className="font-display text-2xl uppercase text-foreground md:text-3xl">
+      <h1 className="font-display text-2xl font-semibold text-foreground md:text-3xl">
         Something broke on this page
       </h1>
       <p className="max-w-md text-sm text-muted-foreground">

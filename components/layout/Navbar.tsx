@@ -6,10 +6,10 @@ import { NAV_LINKS, SITE_OWNER } from "@/lib/constants";
 import NavLink from "./NavLink";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 
-const DESKTOP_LINK_CLASS = "focus-ring rounded-full px-4 py-2 text-sm transition-colors";
-const MOBILE_LINK_CLASS = "focus-ring block rounded-full px-4 py-2 text-sm transition-colors";
-const ACTIVE_CLASS = "bg-muted text-primary";
-const INACTIVE_CLASS = "text-muted-foreground hover:text-foreground";
+const DESKTOP_LINK_CLASS = "focus-ring rounded-lg px-3.5 py-2 text-sm transition-colors";
+const MOBILE_LINK_CLASS = "focus-ring block rounded-lg px-3.5 py-2 text-sm transition-colors";
+const ACTIVE_CLASS = "bg-primary/10 font-medium text-primary";
+const INACTIVE_CLASS = "text-muted-foreground hover:bg-muted hover:text-foreground";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,9 +19,10 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="focus-ring font-display rounded text-lg tracking-tight text-foreground"
+          className="focus-ring font-display flex items-center gap-2 rounded text-lg font-semibold tracking-tight text-foreground"
           onClick={() => setIsOpen(false)}
         >
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
           {SITE_OWNER}
         </Link>
 

@@ -9,7 +9,7 @@ export default function EmptyState({ message, className }: EmptyStateProps) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-dashed border-border p-12 text-center",
+        "rounded-xl border border-dashed border-border/70 p-12 text-center",
         className,
       )}
     >

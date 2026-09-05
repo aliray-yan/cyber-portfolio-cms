@@ -7,41 +7,52 @@
 
 /*
  * Design tokens — light mode (default) and dark mode.
+ *
+ * Palette rationale: a cool graphite/slate base (not a warm neutral) with
+ * a single confident indigo-blue signal color. Blue reads as precise and
+ * trustworthy — it also happens to be literally "blue team" coded, which
+ * fits a portfolio that's half SOC analyst, half software engineer.
+ * Amber is used sparingly as the secondary accent (pending/attention
+ * states, warm contrast against all the cool blue) rather than as an
+ * equal partner to primary.
+ *
  * Every value below was checked against WCAG contrast requirements before
  * being picked (not eyeballed): body text >=4.5:1, borders >=3:1 against
  * both the page background and card surfaces, and button text >=4.5:1
- * against its own button background.
+ * against its own button background. See /contrast-notes if this ever
+ * needs re-deriving — the short version is `relative luminance -> ratio`
+ * per WCAG 2.x, checked pairwise for every token above.
  */
 :root {
-  --background: #f5f0e6;
-  --foreground: #211d18;
+  --background: #f6f7f9;
+  --foreground: #12151c;
   --card: #ffffff;
-  --card-foreground: #211d18;
-  --border: #8f8062;
-  --muted: #ede6d6;
-  --muted-foreground: #6b6355;
-  --primary: #c0432b;
+  --card-foreground: #12151c;
+  --border: #7d8598;
+  --muted: #eef0f4;
+  --muted-foreground: #565f72;
+  --primary: #1d4ed8;
   --primary-foreground: #ffffff;
-  --secondary: #db8a2e;
-  --secondary-foreground: #211d18;
-  --destructive: #8b2635;
+  --secondary: #b45309;
+  --secondary-foreground: #ffffff;
+  --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
 }
 
 .dark {
-  --background: #1b1712;
-  --foreground: #f2ecdd;
-  --card: #272019;
-  --card-foreground: #f2ecdd;
-  --border: #897758;
-  --muted: #2e2820;
-  --muted-foreground: #bbb09a;
-  --primary: #eb6c50;
-  --primary-foreground: #1b1712;
-  --secondary: #eda347;
-  --secondary-foreground: #1b1712;
-  --destructive: #e56a5a;
-  --destructive-foreground: #1b1712;
+  --background: #0a0d13;
+  --foreground: #e7eaf0;
+  --card: #10141c;
+  --card-foreground: #e7eaf0;
+  --border: #616b80;
+  --muted: #161b25;
+  --muted-foreground: #9aa3b5;
+  --primary: #7ea2ff;
+  --primary-foreground: #0a0d13;
+  --secondary: #f0b255;
+  --secondary-foreground: #0a0d13;
+  --destructive: #f2857a;
+  --destructive-foreground: #0a0d13;
 }
 
 /* @theme inline keeps these mapped to the CSS variables above at runtime
@@ -63,8 +74,9 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-display: var(--font-archivo-black);
-  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 @layer base {
@@ -89,5 +101,20 @@
 
   .font-display {
     font-family: var(--font-display), system-ui, sans-serif;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  /* A barely-there dot grid for section backdrops — a nod to network/
+     node diagrams without tipping into a neon "hacker" cliché. Opacity
+     is intentionally low (4-8%) so it reads as texture, not pattern. */
+  .bg-grid-dots {
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent 85%);
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+    opacity: 0.35;
   }
 }

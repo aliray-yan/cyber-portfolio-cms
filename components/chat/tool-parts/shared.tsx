@@ -100,7 +100,7 @@ export function ToolShell({ tone, icon, label, stateKey, children }: ToolShellPr
   const contentRef = useStateTransition<HTMLDivElement>(stateKey);
 
   return (
-    <div className={`w-full max-w-[22rem] rounded-2xl border ${styles.border} ${styles.bg} px-3.5 py-3 text-sm sm:max-w-sm`}>
+    <div className={`w-full max-w-[22rem] rounded-xl border ${styles.border} ${styles.bg} px-3.5 py-3 text-sm sm:max-w-sm`}>
       <div ref={contentRef}>
         <div className={`flex items-center gap-2 ${styles.text}`}>
           <span className={`flex h-5 w-5 shrink-0 items-center justify-center ${styles.icon}`}>{icon}</span>

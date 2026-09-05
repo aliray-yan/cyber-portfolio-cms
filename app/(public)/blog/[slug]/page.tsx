@@ -13,7 +13,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <p className="font-semibold uppercase tracking-wide text-sm text-primary">Article</p>
+      <p className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Article</p>
       <PageHeader title={post?.title ?? slug} className="mt-2" />
 
       {post && (

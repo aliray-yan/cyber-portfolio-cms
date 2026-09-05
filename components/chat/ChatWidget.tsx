@@ -156,12 +156,12 @@ export default function ChatWidget() {
           // the *visual* viewport — on iOS Safari 16.4+ this is what keeps
           // the pinned input above the on-screen keyboard instead of
           // sliding out from under it, without any extra JS.
-          className="fixed inset-0 z-40 flex h-dvh w-dvw flex-col bg-background md:inset-auto md:bottom-24 md:right-6 md:h-[32rem] md:w-96 md:rounded-3xl md:border md:border-border md:shadow-2xl"
+          className="fixed inset-0 z-40 flex h-dvh w-dvw flex-col bg-background md:inset-auto md:bottom-24 md:right-6 md:h-[32rem] md:w-96 md:rounded-3xl md:border md:border-border/70 md:shadow-2xl"
         >
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-foreground">
+              <p className="font-display text-sm font-semibold text-foreground">
                 Ask about Ali
               </p>
               <p className="text-xs text-muted-foreground">

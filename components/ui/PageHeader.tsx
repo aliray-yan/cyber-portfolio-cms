@@ -22,7 +22,7 @@ export default function PageHeader({
       <div>
         <h1
           className={cn(
-            "font-display uppercase leading-tight text-foreground",
+            "font-display font-semibold leading-tight tracking-tight text-foreground",
             size === "page" ? "text-3xl md:text-4xl" : "text-xl",
           )}
         >

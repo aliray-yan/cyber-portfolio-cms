@@ -51,7 +51,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <p className="border-t border-border py-4 text-center text-xs text-muted-foreground">
+      <p className="border-t border-border py-4 text-center font-mono text-[0.6875rem] uppercase tracking-wide text-muted-foreground/70">
         Built with Next.js &amp; Tailwind CSS
       </p>
     </footer>
