@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-6">
+    <div className="flex min-h-dvh items-center justify-center px-6">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8">
         <p className="font-semibold uppercase tracking-wide text-xs text-primary">{SITE_NAME}</p>
         <h1 className="font-display mt-2 text-2xl uppercase text-foreground">

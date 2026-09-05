@@ -35,8 +35,12 @@
 
 import { tool } from "ai";
 import { z } from "zod";
-import { PROJECTS } from "@/lib/data/projects";
-import { SKILL_CATEGORIES } from "@/lib/data/skills";
+// Relative, not "@/lib/data/..." — this file is imported two ways: through
+// Next's bundler (which resolves the "@/" alias fine) and directly by Node
+// for tools.test.ts (which only understands real relative paths). A
+// relative import here works for both without any extra loader config.
+import { PROJECTS } from "../data/projects.ts";
+import { SKILL_CATEGORIES } from "../data/skills.ts";
 
 const PROJECT_CATEGORIES = ["Security", "Development", "Research"] as const;
 

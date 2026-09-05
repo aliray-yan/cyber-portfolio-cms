@@ -41,7 +41,7 @@ export default function RootLayout({
       className={`${archivoBlack.variable} ${plusJakartaSans.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased min-h-screen">
+      <body className="antialiased min-h-dvh">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

@@ -9,7 +9,7 @@ const INACTIVE_CLASS = "text-muted-foreground hover:bg-muted hover:text-foregrou
 
 export default function DashboardSidebar() {
   return (
-    <aside className="w-full shrink-0 border-border bg-card md:h-screen md:w-60 md:border-r">
+    <aside className="w-full shrink-0 border-border bg-card md:h-dvh md:w-60 md:border-r">
       <div className="px-6 py-6">
         <p className="text-sm font-semibold text-foreground">
           <span className="text-primary">&bull;</span> Admin Panel

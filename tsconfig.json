@@ -13,6 +13,12 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    // Lets lib/ai/errors.test.ts import "./errors.ts" with an explicit
+    // extension, which Node's native --experimental-strip-types runner
+    // requires (see package.json's "test" script) — safe alongside
+    // noEmit/bundler resolution, doesn't change how Next.js itself resolves
+    // extensionless imports anywhere else in the app.
+    "allowImportingTsExtensions": true,
     "plugins": [
       {
         "name": "next"
