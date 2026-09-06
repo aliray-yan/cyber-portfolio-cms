@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
 import PlaceholderBanner from "@/components/ui/PlaceholderBanner";
 import { EXPERIENCE } from "@/lib/data/experience";
 
@@ -15,7 +16,7 @@ export default function AboutPage() {
       <PageHeader title="About Me" />
 
       <section className="mt-10">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">
           Professional Summary
         </h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">
@@ -37,7 +38,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Education</h2>
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Education</h2>
         <Card className="mt-3">
           <p className="font-semibold text-foreground">
             BS Software Engineering
@@ -49,7 +50,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Experience</h2>
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Experience</h2>
         <div className="mt-3 space-y-4">
           {EXPERIENCE.map((entry) => (
             <Card key={`${entry.organization}-${entry.period}`}>
@@ -57,7 +58,7 @@ export default function AboutPage() {
                 <p className="font-semibold text-foreground">
                   {entry.role} &middot; {entry.organization}
                 </p>
-                <p className="font-semibold uppercase tracking-wide text-xs text-muted-foreground">
+                <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
                   {entry.period}
                 </p>
               </div>
@@ -70,15 +71,12 @@ export default function AboutPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Interests</h2>
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Interests</h2>
         <ul className="mt-3 flex flex-wrap gap-2">
           {["Cybersecurity", "Frontend Development", "Security Research"].map(
             (interest) => (
-              <li
-                key={interest}
-                className="rounded-full bg-card border border-border px-3 py-1 text-sm text-foreground"
-              >
-                {interest}
+              <li key={interest}>
+                <Badge variant="muted">{interest}</Badge>
               </li>
             ),
           )}

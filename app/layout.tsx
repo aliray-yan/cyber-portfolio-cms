@@ -1,23 +1,35 @@
 import type { Metadata } from "next";
-import { Archivo_Black, Plus_Jakarta_Sans } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 
 // next/font self-hosts these at build time — no external request at
-// runtime, no layout shift. Archivo Black for bold display headings
-// (matches the condensed all-caps look of the reference design), Plus
-// Jakarta Sans for body text (warmer and friendlier than a generic
-// system sans, pairs well with Archivo Black without competing with it).
-const archivoBlack = Archivo_Black({
+// runtime, no layout shift.
+//
+// Space Grotesk for display headings: a geometric grotesk with just
+// enough character (the squared-off "G", the tall x-height) to feel
+// technical and considered without forcing every headline into all-caps
+// to earn its keep. Inter for body text — a neutral, highly legible
+// workhorse that gets out of the way of the content. JetBrains Mono is
+// the accent voice: eyebrow labels, tags, timestamps, and stat numbers —
+// a restrained nod to this being a developer/SOC-analyst's site, used as
+// seasoning rather than the whole dish.
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-archivo-black",
+  weight: ["500", "600", "700"],
+  variable: "--font-space-grotesk",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-jakarta",
+  variable: "--font-inter",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-jetbrains-mono",
 });
 
 export const metadata: Metadata = {
@@ -38,7 +50,7 @@ export default function RootLayout({
     // tells React that's expected, not a bug.
     <html
       lang="en"
-      className={`${archivoBlack.variable} ${plusJakartaSans.variable}`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased min-h-dvh">

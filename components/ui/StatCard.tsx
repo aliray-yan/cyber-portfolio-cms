@@ -8,7 +8,7 @@ interface StatCardProps {
 export default function StatCard({ label, value }: StatCardProps) {
   return (
     <Card>
-      <p className="font-display text-3xl text-primary">{value}</p>
+      <p className="font-mono text-3xl font-medium tabular-nums text-primary">{value}</p>
       <p className="mt-1 text-sm text-muted-foreground">{label}</p>
     </Card>
   );

@@ -3,16 +3,17 @@
 import { DASHBOARD_LINKS } from "@/lib/constants";
 import NavLink from "./NavLink";
 
-const LINK_CLASS = "focus-ring block rounded-full px-4 py-2 text-sm transition-colors";
-const ACTIVE_CLASS = "bg-muted text-primary";
+const LINK_CLASS = "focus-ring block rounded-lg px-3.5 py-2 text-sm transition-colors";
+const ACTIVE_CLASS = "bg-primary/10 font-medium text-primary";
 const INACTIVE_CLASS = "text-muted-foreground hover:bg-muted hover:text-foreground";
 
 export default function DashboardSidebar() {
   return (
     <aside className="w-full shrink-0 border-border bg-card md:h-dvh md:w-60 md:border-r">
       <div className="px-6 py-6">
-        <p className="text-sm font-semibold text-foreground">
-          <span className="text-primary">&bull;</span> Admin Panel
+        <p className="font-display flex items-center gap-2 text-sm font-semibold text-foreground">
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
+          Admin Panel
         </p>
       </div>
 

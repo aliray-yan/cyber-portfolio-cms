@@ -1,3 +1,5 @@
+import Card from "@/components/ui/Card";
+
 interface GitHubUser {
   login: string;
   id: number;
@@ -40,10 +42,10 @@ export default async function HealthCheckPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
-      <h1 className="font-display text-3xl uppercase text-foreground">Health Check</h1>
+      <h1 className="font-display text-3xl font-semibold text-foreground">Health Check</h1>
 
-      <section className="mt-10 rounded-2xl border border-border bg-card p-6">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">
+      <Card className="mt-10">
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">
           Application Status
         </h2>
         <dl className="mt-4 space-y-2 text-sm">
@@ -57,13 +59,13 @@ export default async function HealthCheckPage() {
           </div>
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Timestamp</dt>
-            <dd className="text-foreground">{timestamp}</dd>
+            <dd className="font-mono text-xs text-foreground">{timestamp}</dd>
           </div>
         </dl>
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-2xl border border-border bg-card p-6">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">
+      <Card className="mt-6">
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">
           API Connectivity Test
         </h2>
         <dl className="mt-4 space-y-2 text-sm">
@@ -112,22 +114,22 @@ export default async function HealthCheckPage() {
         )}
 
         {!apiResult.success && (
-          <div className="mt-4 rounded-xl border border-destructive/30 bg-background p-4">
+          <div className="mt-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
             <p className="text-sm text-destructive">
               {apiResult.error ?? "The health check request failed."}
             </p>
           </div>
         )}
-      </section>
+      </Card>
 
-      <section className="mt-6 rounded-2xl border border-border bg-card p-6">
-        <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">
+      <Card className="mt-6">
+        <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">
           Server Component Verification
         </h2>
         <p className="mt-3 text-sm text-muted-foreground">
           This data was fetched server-side. No API key required.
         </p>
-      </section>
+      </Card>
     </div>
   );
 }

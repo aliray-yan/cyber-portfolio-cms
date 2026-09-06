@@ -14,7 +14,7 @@ export default function DashboardSettingsPage() {
 
       <div className="mt-8 space-y-6">
         <Card>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Profile</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Profile</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Name</dt>
@@ -34,7 +34,7 @@ export default function DashboardSettingsPage() {
         </Card>
 
         <Card>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Social Links</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Social Links</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">GitHub</dt>
@@ -54,7 +54,7 @@ export default function DashboardSettingsPage() {
         </Card>
 
         <Card>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Resume</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Resume</h2>
           <p className="mt-4 text-sm text-foreground">Ali Rayyan.pdf</p>
         </Card>
       </div>

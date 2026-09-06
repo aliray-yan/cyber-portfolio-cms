@@ -1,0 +1,120 @@
+name: CI
+
+# Runs on every push and every PR into main — a red run here blocks
+# merging once this repo's branch protection requires the "test", "db",
+# and "e2e" checks (Settings → Branches → Branch protection rules →
+# Require status checks to pass). The workflow can't turn that
+# requirement on by itself; that's a one-time setting only a repo admin
+# can flip.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Lint, types, unit & component tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests (lib/ai)
+        run: npm run test:unit
+
+      - name: Component tests (Vitest + React Testing Library)
+        run: npm run test:components
+
+  db:
+    name: Database schema & seed (Prisma + Postgres)
+    runs-on: ubuntu-latest
+    needs: test
+    # A throwaway Postgres for this job only — nothing to do with the real
+    # Neon database. This is what actually validates prisma/schema.prisma
+    # and prisma/seed.ts end to end: pushing the schema to a real Postgres
+    # and seeding it, something that couldn't be verified from the sandbox
+    # this project was built in (network policy there blocks
+    # binaries.prisma.sh, which `prisma generate`/`db push` need).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: prisma
+          POSTGRES_DB: cyber_portfolio_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://prisma:prisma@localhost:5432/cyber_portfolio_ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Push schema to the throwaway database
+        run: npx prisma db push
+
+      - name: Seed it from lib/data/*.ts
+        run: npx prisma db seed
+
+      - name: Seed again, to confirm it's idempotent
+        run: npx prisma db seed
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    needs: test
+    env:
+      # The chat route is mocked at the browser network layer in every
+      # e2e test (see e2e/primary-flow.spec.ts) — this key only needs to
+      # be present so the app boots; it is never actually called.
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || 'unused-in-ci' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright
+        run: npx playwright test --project=chromium
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

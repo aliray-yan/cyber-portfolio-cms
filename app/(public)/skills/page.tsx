@@ -16,7 +16,7 @@ export default function SkillsPage() {
       <div className="mt-10 grid gap-8 md:grid-cols-3">
         {SKILL_CATEGORIES.map((category) => (
           <div key={category.title}>
-            <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">
+            <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">
               {category.title}
             </h2>
             <ul className="mt-4 space-y-3">

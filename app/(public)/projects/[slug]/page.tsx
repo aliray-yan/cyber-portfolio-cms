@@ -16,7 +16,7 @@ export default async function ProjectDetailPage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
-      <p className="font-semibold uppercase tracking-wide text-sm text-primary">Project</p>
+      <p className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Project</p>
       <PageHeader
         title={project?.title ?? slug}
         className="mt-2"
@@ -49,7 +49,7 @@ export default async function ProjectDetailPage({
 
       <div className="mt-10 space-y-8">
         <section>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Overview</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Overview</h2>
           <p className="mt-2 text-muted-foreground">
             {project?.description ??
               "A high-level summary of the project will appear here once content is sourced from the database."}
@@ -57,28 +57,28 @@ export default async function ProjectDetailPage({
         </section>
 
         <section>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Problem</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Problem</h2>
           <p className="mt-2 text-muted-foreground">
             The problem this project set out to solve will be described here.
           </p>
         </section>
 
         <section>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Solution</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Solution</h2>
           <p className="mt-2 text-muted-foreground">
             The approach taken to solve the problem will be described here.
           </p>
         </section>
 
         <section>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Tech Stack</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Tech Stack</h2>
           <p className="mt-2 text-muted-foreground">
             {project ? project.tags.join(", ") : "Technologies used in this project will be listed here."}
           </p>
         </section>
 
         <section>
-          <h2 className="font-semibold uppercase tracking-wide text-sm text-primary">Links</h2>
+          <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Links</h2>
           {project?.githubUrl ? (
             <LinkButton href={project.githubUrl} external variant="outline" className="mt-2">
               GitHub Repository

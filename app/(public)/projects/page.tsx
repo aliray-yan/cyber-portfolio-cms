@@ -28,7 +28,7 @@ export default function ProjectsPage() {
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {PROJECTS.map((project) => (
-          <Card key={project.slug} className="flex flex-col">
+          <Card key={project.slug} interactive className="flex flex-col">
             <Badge className="w-fit">{project.category}</Badge>
             <h2 className="mt-4 text-lg font-semibold text-foreground">
               {project.title}

@@ -39,15 +39,15 @@ export default function GlobalError({
           padding: "1.5rem",
           textAlign: "center",
           fontFamily: "system-ui, sans-serif",
-          backgroundColor: "#f5f0e6",
-          color: "#211d18",
+          backgroundColor: "#f6f7f9",
+          color: "#12151c",
         }}
       >
-        <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#c0432b" }}>
+        <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#1d4ed8" }}>
           Error
         </p>
         <h1 style={{ fontSize: "1.5rem", margin: 0 }}>This site hit a problem loading</h1>
-        <p style={{ maxWidth: "28rem", fontSize: "0.875rem", color: "#6b6355" }}>
+        <p style={{ maxWidth: "28rem", fontSize: "0.875rem", color: "#565f72" }}>
           Not something you did — try reloading the page.
         </p>
         <button
@@ -55,10 +55,10 @@ export default function GlobalError({
           style={{
             marginTop: "0.5rem",
             padding: "0.6rem 1.4rem",
-            borderRadius: "9999px",
+            borderRadius: "0.5rem",
             border: "none",
-            backgroundColor: "#c0432b",
-            color: "#f5f0e6",
+            backgroundColor: "#1d4ed8",
+            color: "#ffffff",
             fontSize: "0.875rem",
             cursor: "pointer",
           }}

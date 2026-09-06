@@ -12,8 +12,8 @@ interface ChatMessageProps {
 function TextBubble({ text, isUser }: { text: string; isUser: boolean }) {
   return (
     <div
-      className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-        isUser ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground"
+      className={`max-w-[85%] rounded-xl px-4 py-2.5 text-sm leading-relaxed ${
+        isUser ? "bg-primary text-primary-foreground" : "border border-border/70 bg-card text-foreground"
       }`}
     >
       {isUser ? <p className="whitespace-pre-wrap">{text}</p> : <Streamdown>{text}</Streamdown>}
@@ -32,7 +32,11 @@ export default function ChatMessage({ message, showThinking, addToolResult }: Ch
           a tool card's own input-streaming/pending states take over as
           the "working" signal from that point on. */}
       {showThinking && (
-        <div className="max-w-[85%] rounded-2xl border border-border bg-card px-4 py-2.5 text-sm">
+        <div
+          role="status"
+          aria-label="Assistant is responding"
+          className="max-w-[85%] rounded-xl border border-border/70 bg-card px-4 py-2.5 text-sm"
+        >
           <ThinkingIndicator />
         </div>
       )}

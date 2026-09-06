@@ -1,0 +1,110 @@
+// prisma/schema.prisma
+// ───────────────────────────────────────────────────────────────────────────
+// Phase 3 database layer. Models mirror the TypeScript interfaces already in
+// lib/data/*.ts exactly (see the comment at the top of lib/data/projects.ts —
+// this was designed from day one to be a drop-in swap, not a redesign).
+//
+// Provider is deliberately kept as "prisma-client-js" rather than the newer
+// "prisma-client" — Prisma 7's recommended generator currently has a known
+// module-resolution conflict with Next.js 16's Turbopack bundler
+// ("Cannot find module '.prisma/client/default'"). prisma-client-js side-steps
+// it entirely and is still fully supported in v7; see next.config.ts's
+// serverExternalPackages for the other half of that fix.
+generator client {
+  provider = "prisma-client-js"
+}
+
+// No url/directUrl/shadowDatabaseUrl here — Prisma 7 moved connection config
+// out of the schema file entirely. See prisma.config.ts.
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProjectCategory {
+  Security
+  Development
+  Research
+}
+
+enum ProficiencyLevel {
+  Beginner
+  Intermediate
+  Advanced
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  title       String
+  description String
+  category    ProjectCategory
+  tags        String[]
+  githubUrl   String?
+  featured    Boolean         @default(false)
+  order       Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("projects")
+}
+
+model SkillCategory {
+  id     String  @id @default(cuid())
+  title  String  @unique
+  order  Int     @default(0)
+  skills Skill[]
+
+  @@map("skill_categories")
+}
+
+model Skill {
+  id         String           @id @default(cuid())
+  name       String
+  level      ProficiencyLevel
+  order      Int              @default(0)
+  categoryId String
+  category   SkillCategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("skills")
+}
+
+model Certification {
+  id            String   @id @default(cuid())
+  name          String
+  issuer        String
+  year          String
+  credentialUrl String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@map("certifications")
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  date      DateTime
+  excerpt   String
+  // Full markdown body. Defaults to "" because today's placeholder posts
+  // (lib/data/blog.ts) don't have real bodies yet — the site's own
+  // PlaceholderBanner already tells visitors "Blog content will load from
+  // the database. Phase 5" — this field is what that promise fills in.
+  content   String   @default("")
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+model ExperienceEntry {
+  id           String   @id @default(cuid())
+  role         String
+  organization String
+  period       String
+  description  String
+  order        Int      @default(0)
+
+  @@map("experience_entries")
+}

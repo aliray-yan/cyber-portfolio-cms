@@ -98,9 +98,16 @@ interface ToolShellProps {
 export function ToolShell({ tone, icon, label, stateKey, children }: ToolShellProps) {
   const styles = TONE_STYLES[tone];
   const contentRef = useStateTransition<HTMLDivElement>(stateKey);
+  // Pending/streaming tool calls are transient status updates a screen
+  // reader should announce as they happen; a failed call is important
+  // enough to interrupt, same as the top-level chat error banner
+  // (ChatWidget.tsx) already does with role="alert". "success" gets
+  // neither — its content isn't ephemeral, so an assertive/polite live
+  // region would just be noise once the chart/table is already visible.
+  const role = tone === "error" ? "alert" : tone === "pending" || tone === "streaming" ? "status" : undefined;
 
   return (
-    <div className={`w-full max-w-[22rem] rounded-2xl border ${styles.border} ${styles.bg} px-3.5 py-3 text-sm sm:max-w-sm`}>
+    <div role={role} className={`w-full max-w-[22rem] rounded-xl border ${styles.border} ${styles.bg} px-3.5 py-3 text-sm sm:max-w-sm`}>
       <div ref={contentRef}>
         <div className={`flex items-center gap-2 ${styles.text}`}>
           <span className={`flex h-5 w-5 shrink-0 items-center justify-center ${styles.icon}`}>{icon}</span>
