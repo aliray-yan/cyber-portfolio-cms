@@ -20,10 +20,7 @@ export default function ProjectsPage() {
       />
 
       <div className="mt-8">
-        <PlaceholderBanner
-          message="Project data will load from the database."
-          phase="Phase 3"
-        />
+        
       </div>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
