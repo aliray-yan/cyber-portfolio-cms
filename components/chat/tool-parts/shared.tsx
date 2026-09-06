@@ -107,7 +107,7 @@ export function ToolShell({ tone, icon, label, stateKey, children }: ToolShellPr
   const role = tone === "error" ? "alert" : tone === "pending" || tone === "streaming" ? "status" : undefined;
 
   return (
-    <div role={role} className={`w-full max-w-[22rem] rounded-xl border ${styles.border} ${styles.bg} px-3.5 py-3 text-sm sm:max-w-sm`}>
+    <div role={role} className={`w-full max-w-88 rounded-xl border ${styles.border} ${styles.bg} px-3.5 py-3 text-sm sm:max-w-sm`}>
       <div ref={contentRef}>
         <div className={`flex items-center gap-2 ${styles.text}`}>
           <span className={`flex h-5 w-5 shrink-0 items-center justify-center ${styles.icon}`}>{icon}</span>
@@ -142,7 +142,7 @@ export function TerminalLine({ children }: { children: ReactNode }) {
     <p className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
       <span className="text-primary/70">$</span>
       <span className="truncate">{children}</span>
-      <span className="inline-block h-3 w-[2px] shrink-0 animate-pulse bg-muted-foreground/60" />
+      <span className="inline-block h-3 w-0.5 shrink-0 animate-pulse bg-muted-foreground/60" />
     </p>
   );
 }
