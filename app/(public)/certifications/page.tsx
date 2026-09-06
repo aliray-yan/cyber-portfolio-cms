@@ -18,10 +18,6 @@ export default function CertificationsPage() {
       />
 
       <div className="mt-8">
-        <PlaceholderBanner
-          message="Certification data will load from the database."
-          phase="Phase 3"
-        />
       </div>
 
       <div className="mt-10 space-y-4">
