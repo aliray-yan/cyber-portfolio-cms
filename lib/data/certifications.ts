@@ -1,10 +1,12 @@
 /**
  * lib/data/certifications.ts
  * ─────────────────────────────────────────────────────────────────────────
- * Certification data, read by /certifications. Credential links are only
- * included where a real, public verification URL exists — we don't invent
- * "Verify" links that go nowhere.
+ * Live certification reads, backed by Postgres via Prisma. See the note at
+ * the top of lib/data/projects.ts for why this uses a relative import for
+ * lib/db and a hand-written row shape instead of importing generated
+ * Prisma types.
  */
+import { prisma } from "../db.ts";
 
 export interface Certification {
   name: string;
@@ -13,20 +15,23 @@ export interface Certification {
   credentialUrl?: string;
 }
 
-export const CERTIFICATIONS: Certification[] = [
-  {
-    name: "Cybersecurity Analyst Professional Certificate",
-    issuer: "IBM",
-    year: "2025",
-  },
-  {
-    name: "SOC Level 1",
-    issuer: "TryHackMe",
-    year: "2025",
-  },
-  {
-    name: "Cybersecurity Fundamentals, Volume 1",
-    issuer: "Independent Study",
-    year: "2024",
-  },
-];
+interface CertificationRow {
+  name: string;
+  issuer: string;
+  year: string;
+  credentialUrl: string | null;
+}
+
+function toCertification(row: CertificationRow): Certification {
+  return {
+    name: row.name,
+    issuer: row.issuer,
+    year: row.year,
+    credentialUrl: row.credentialUrl ?? undefined,
+  };
+}
+
+export async function getAllCertifications(): Promise<Certification[]> {
+  const rows = await prisma.certification.findMany({ orderBy: { order: "asc" } });
+  return rows.map(toCertification);
+}

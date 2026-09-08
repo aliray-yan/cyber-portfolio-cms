@@ -3,14 +3,16 @@ import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import PlaceholderBanner from "@/components/ui/PlaceholderBanner";
-import { EXPERIENCE } from "@/lib/data/experience";
+import { getExperience } from "@/lib/data/experience";
 
 export const metadata: Metadata = {
   title: "About | Cyber Portfolio CMS",
   description: "Professional background, education, and career goals.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const experience = await getExperience();
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
       <PageHeader title="About Me" />
@@ -52,7 +54,7 @@ export default function AboutPage() {
       <section className="mt-10">
         <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">Experience</h2>
         <div className="mt-3 space-y-4">
-          {EXPERIENCE.map((entry) => (
+          {experience.map((entry) => (
             <Card key={`${entry.organization}-${entry.period}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <p className="font-semibold text-foreground">

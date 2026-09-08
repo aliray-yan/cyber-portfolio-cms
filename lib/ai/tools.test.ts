@@ -10,49 +10,93 @@
  * getSkillsRadar given input that doesn't match anything real throws a
  * specific, friendly error rather than guessing or crashing — the same
  * property route.ts's onError depends on for the mid-stream case.
+ *
+ * These test the PURE filterProjects/selectSkillCategories helpers against
+ * small fixtures, not the tools' execute() wrappers — execute() itself
+ * just awaits a live Prisma read (getAllProjects/getSkillCategories) and
+ * hands the result to these same functions, so exercising the DB call
+ * here would only make this test slower and dependent on a real database
+ * connection without covering any additional logic. Fixtures are
+ * deliberately tiny and don't need to match prisma/seed-data/*.ts — they
+ * only need to exercise the matching/error-throwing behavior below.
  */
 
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { searchProjects, getSkillsRadar } from "./tools.ts";
+import { filterProjects, selectSkillCategories } from "./tools.ts";
+import type { Project } from "../data/projects.ts";
+import type { SkillCategory } from "../data/skills.ts";
 
-// Tool execute() functions take a second "options" argument (toolCallId,
-// messages, context, ...) that only matters when a tool actually reads it
-// — neither of ours does. eslint-disable is scoped to this one line of
-// test scaffolding, not a statement about the tools' real types.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const testOptions: any = { toolCallId: "test-call", messages: [] };
+const FIXTURE_PROJECTS: Project[] = [
+  {
+    slug: "secops-workbench",
+    title: "SOC Workbench",
+    description: "Alert triage and case management for a SOC team.",
+    category: "Security",
+    tags: ["React", "FastAPI"],
+    githubUrl: "https://github.com/example/secops-workbench",
+    featured: true,
+  },
+  {
+    slug: "threat-feed-automation",
+    title: "Threat Feed Automation",
+    description: "n8n pipeline that enriches and routes threat intel.",
+    category: "Security",
+    tags: ["n8n", "Automation"],
+  },
+  {
+    slug: "rag-mastery",
+    title: "RAG Mastery",
+    description: "Full-stack RAG learning platform with a playground.",
+    category: "Development",
+    tags: ["RAG", "React"],
+  },
+];
 
-/** execute() is typed to allow returning an AsyncIterable (streaming
- *  results); neither of our tools does that, so this asserts the plain
- *  value and gives the test bodies a concrete type to work with. */
-async function runTool<T>(result: T | AsyncIterable<T> | PromiseLike<T | AsyncIterable<T>>): Promise<T> {
-  const resolved = await result;
-  if (resolved !== null && typeof resolved === "object" && Symbol.asyncIterator in resolved) {
-    throw new Error("expected a single result, got an async iterable");
-  }
-  return resolved as T;
-}
+const FIXTURE_SKILL_CATEGORIES: SkillCategory[] = [
+  {
+    title: "SOC & SIEM",
+    skills: [
+      { name: "Wazuh", level: "Advanced" },
+      { name: "Sentinel", level: "Intermediate" },
+    ],
+  },
+  {
+    title: "Recon & Assessment",
+    skills: [{ name: "Nmap", level: "Advanced" }],
+  },
+  {
+    title: "Automation & Development",
+    skills: [{ name: "n8n", level: "Advanced" }],
+  },
+];
 
-test("searchProjects: unmatched query returns an empty result, not an error", async () => {
-  const result = await runTool(
-    searchProjects.execute!({ query: "quantum blockchain nft metaverse", category: undefined, limit: undefined }, testOptions),
-  );
-  assert.equal(result.returned, 0);
-  assert.deepEqual(result.projects, []);
+test("filterProjects: unmatched query returns an empty result, not an error", () => {
+  const { allMatches, matches } = filterProjects(FIXTURE_PROJECTS, {
+    query: "quantum blockchain nft metaverse",
+  });
+  assert.equal(allMatches.length, 0);
+  assert.deepEqual(matches, []);
 });
 
-test("searchProjects: category filter only returns projects in that category", async () => {
-  const result = await runTool(
-    searchProjects.execute!({ query: undefined, category: "Security", limit: undefined }, testOptions),
-  );
-  assert.ok(result.returned > 0, "expected at least one Security project");
-  assert.ok(result.projects.every((p) => p.category === "Security"));
+test("filterProjects: category filter only returns projects in that category", () => {
+  const { matches } = filterProjects(FIXTURE_PROJECTS, { category: "Security" });
+  assert.ok(matches.length > 0, "expected at least one Security project");
+  assert.ok(matches.every((p) => p.category === "Security"));
 });
 
-test("getSkillsRadar: an unknown category throws a specific, friendly error (not a crash, not a silent empty result)", async () => {
-  await assert.rejects(
-    () => runTool(getSkillsRadar.execute!({ category: "Quantum Computing" }, testOptions)),
+test("filterProjects: limit caps the returned matches but not the total count", () => {
+  const { allMatches, matches } = filterProjects(FIXTURE_PROJECTS, {
+    category: "Security",
+    limit: 1,
+  });
+  assert.equal(allMatches.length, 2);
+  assert.equal(matches.length, 1);
+});
+
+test("selectSkillCategories: an unknown category throws a specific, friendly error (not a crash, not a silent empty result)", () => {
+  assert.throws(
+    () => selectSkillCategories(FIXTURE_SKILL_CATEGORIES, "Quantum Computing"),
     (error: unknown) => {
       assert.ok(error instanceof Error);
       // Names the bad input back and lists the real options — this is
@@ -65,13 +109,13 @@ test("getSkillsRadar: an unknown category throws a specific, friendly error (not
   );
 });
 
-test("getSkillsRadar: a partial, differently-cased match still resolves (visitor phrasing shouldn't need to be exact)", async () => {
-  const result = await runTool(getSkillsRadar.execute!({ category: "recon" }, testOptions));
-  assert.equal(result.categories.length, 1);
-  assert.match(result.categories[0].title, /Recon/);
+test("selectSkillCategories: a partial, differently-cased match still resolves (visitor phrasing shouldn't need to be exact)", () => {
+  const selected = selectSkillCategories(FIXTURE_SKILL_CATEGORIES, "recon");
+  assert.equal(selected.length, 1);
+  assert.match(selected[0].title, /Recon/);
 });
 
-test("getSkillsRadar: omitting the category returns all three real categories", async () => {
-  const result = await runTool(getSkillsRadar.execute!({ category: undefined }, testOptions));
-  assert.equal(result.categories.length, 3);
+test("selectSkillCategories: omitting the category returns all three real categories", () => {
+  const selected = selectSkillCategories(FIXTURE_SKILL_CATEGORIES, undefined);
+  assert.equal(selected.length, 3);
 });

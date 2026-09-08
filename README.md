@@ -1,6 +1,6 @@
 # Cyber Portfolio CMS
 
-Professional cybersecurity portfolio platform, built as a Frontend AI Engineering internship capstone. Public portfolio site + an AI assistant that can query the portfolio's real data through tool calls. The CMS admin dashboard (Phases 3–5) is not built yet — see [Status](#status).
+Professional cybersecurity portfolio platform, built as a Frontend AI Engineering internship capstone. Public portfolio site + an AI assistant that can query the portfolio's real data through tool calls, backed by a live Postgres database with a single-admin CMS dashboard. See [Status](#status).
 
 ## Live Demo
 https://cyber-portfolio-cms.vercel.app/
@@ -11,18 +11,22 @@ https://cyber-portfolio-cms.vercel.app/
 |---|---|---|
 | 1 — Deployed Skeleton | Routing, layout, placeholder pages | ✅ Done |
 | 2 — UI Development | Real content, design system, light/dark theme, component library, AI assistant + tool calling | ✅ Done |
-| 3 — Database & Data Layer | Prisma + Supabase/Neon, replace `lib/data/*.ts` with real queries | ⬜ Not started |
-| 4 — Authentication | Auth.js, protect `/dashboard/*` | ⬜ Not started |
+| 3 — Database & Data Layer | Prisma + Neon, replace `lib/data/*.ts` with real queries | ✅ Done |
+| 4 — Authentication | Auth.js, protect `/dashboard/*` | ✅ Done |
 | 5 — CMS Functionality | Real CRUD for projects/blog/certs/skills, Cloudinary upload | ⬜ Not started |
 | 6 — Polish & Launch | SEO, Lighthouse pass, final docs | ⬜ Not started |
 
-All public-facing content currently reads from typed static data in `lib/data/*.ts`, shaped to match the eventual Prisma schema so Phase 3 is a query swap, not a rewrite. The dashboard route group exists but every action in it is a disabled placeholder until Phase 4/5.
+`lib/data/*.ts` reads live from Postgres via Prisma (`lib/db.ts`) — the original static arrays now live in `prisma/seed-data/*.ts` and only matter for `npm run db:seed` (fresh databases, or resetting to "factory" content). The AI assistant's system prompt is rebuilt from the same live data on every chat request, so a CMS edit shows up in its answers immediately.
+
+`/dashboard/*` requires signing in at `/login` — single-admin credentials via Auth.js (`ADMIN_EMAIL` + a bcrypt-hashed `ADMIN_PASSWORD_HASH`, see `.env.example`), no users table. CRUD forms themselves are still Phase 5 — the dashboard currently shows real auth-gated placeholder pages, not yet editable content.
 
 **Week 5 also included a second assignment — resilience/error handling for the chat flow.** See [Resilience & Error Handling](#resilience--error-handling) below.
 
 ## Tech Stack
 - Next.js 16 (App Router, Turbopack), React 19, TypeScript (strict)
 - Tailwind CSS v4
+- Prisma 7 (driver adapters, `@prisma/adapter-pg`) + Neon Postgres
+- Auth.js (next-auth v5) — Credentials provider, JWT sessions, single admin
 - Vercel AI SDK (`ai` v7, `@ai-sdk/react`) + OpenRouter — streaming chat with server- and client-side tool calling
 - Anime.js v4 — entrance/reveal animations and tool-call state transitions
 - next-themes — light/dark mode
@@ -157,18 +161,26 @@ cd cyber-portfolio-cms
 npm install
 cp .env.example .env.local
 # add OPENROUTER_API_KEY (free, no card — https://openrouter.ai/keys)
+# add DATABASE_URL (Neon Postgres — pooled connection string)
+npm run db:migrate    # applies prisma/migrations/ to your database
+npm run db:seed       # populates it from prisma/seed-data/*.ts
+# add AUTH_SECRET (openssl rand -base64 33) and AUTH_URL=http://localhost:3000
+# add ADMIN_EMAIL, and ADMIN_PASSWORD_HASH via:
+npm run hash-password -- "your-password"
 npm run dev
 ```
 
-On Vercel: Project → Settings → Environment Variables → add `OPENROUTER_API_KEY` for Production, Preview, and Development, then redeploy.
+On Vercel: Project → Settings → Environment Variables → add `OPENROUTER_API_KEY`, `DATABASE_URL`, `AUTH_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH` for Production, Preview, and Development (`AUTH_URL` isn't needed there — Auth.js infers it on Vercel), then redeploy.
 
 ## Project Structure
 
 ```
 app/
   (public)/            -> Navbar + Footer + ChatWidget wrap every visitor-facing route
-  (auth)/login/        -> Login route (Phase 4 — not yet functional)
-  (dashboard)/         -> Admin routes; every action is a disabled placeholder until Phase 4/5
+  (auth)/login/        -> Real Auth.js login (server action + useActionState form)
+  (dashboard)/         -> Admin routes; gated by proxy.ts + a session check in layout.tsx.
+                           CRUD actions themselves are still disabled placeholders until Phase 5
+  api/auth/[...nextauth]/route.ts -> Auth.js route handler (sign-in/out, session, callbacks)
   api/chat/route.ts    -> Streaming chat endpoint — wires portfolioTools into streamText, layered error handling
   error.tsx             -> Route-segment error boundary (page-level failures)
   global-error.tsx       -> Last-resort boundary if the root layout itself throws
@@ -176,7 +188,7 @@ app/
 
 components/
   ui/                  -> Button, LinkButton, Card, Badge, Input, PageHeader, EmptyState, StatCard, ...
-  layout/               -> Navbar, Footer, DashboardSidebar, NavLink
+  layout/               -> Navbar, Footer, DashboardSidebar (session-aware, sign-out), NavLink
   theme/                -> ThemeProvider, ThemeToggle (light/dark)
   motion/               -> Reveal (Anime.js entrance/scroll-reveal primitive)
   chat/                 -> ChatWidget (retry, mobile-Safari fixes), ChatMessage, ToolPart (dispatcher),
@@ -184,25 +196,42 @@ components/
   chat/tool-parts/      -> One renderer per tool (ProjectSearchPart, SkillsRadarPart, IntroEmailPart) + shared chrome
 
 lib/
-  ai/config.ts          -> Model + system prompt, single source of truth
+  ai/config.ts          -> Model + system prompt; getSystemPrompt() rebuilds the portfolio context from
+                            live data on every request (not cached at module scope)
   ai/tools.ts            -> Tool definitions (Zod schemas + execute) — see Tool contracts above
-  ai/tools.test.ts       -> Automated tests for the tools' business logic (see Resilience section)
+  ai/tools.test.ts       -> Unit tests for the tools' pure filter/select logic, against fixtures (no live DB)
   ai/errors.ts            -> describeError() — provider-error-to-visitor-message mapping, unit tested
   ai/errors.test.ts       -> Automated tests for describeError()
   ai/message-types.ts    -> InferUITools wiring — fully typed UIMessage for the chat widget
   motion/useStateTransition.ts -> Anime.js crossfade hook for tool-part states and the error banner
-  data/                  -> projects, certifications, skills, experience, blog (typed, Prisma-shaped)
+  data/                  -> projects, certifications, skills, experience, blog — live Prisma reads
+  db.ts                  -> The one PrismaClient instance (driver adapter, Neon-ready)
+  auth.config.ts          -> Edge-safe Auth.js config (routing rules) — used by proxy.ts
+  auth.ts                 -> Full Auth.js config (Credentials provider, bcrypt) — used by server code
+  auth-actions.ts          -> signOutAction server action
   constants.ts            -> Site-wide constants, nav links, real contact info
   utils.ts                -> cn() class-merge helper
+
+prisma/
+  schema.prisma          -> Data model (Project, SkillCategory, Skill, Certification, BlogPost, ExperienceEntry)
+  seed.ts                 -> Populates the DB from prisma/seed-data/*.ts (npm run db:seed)
+  seed-data/              -> The "factory" content — moved out of lib/data/*.ts once those switched to live queries
+
+scripts/
+  hash-password.mjs      -> CLI: npm run hash-password -- "password" -> ADMIN_PASSWORD_HASH
+
+proxy.ts                 -> Route protection for /dashboard/* (Next 16's replacement for middleware.ts)
 ```
 
 ## Known Limitations / Next Steps
 
-- Phase 3 (database) is the natural next step — needs a Supabase or Neon Postgres connection string (`DATABASE_URL`) before it can start.
-- Blog post bodies are still excerpts only — full article content is pending Phase 5.
-- Dashboard is fully non-functional by design (Phase 1/4/5 gate).
+- CMS CRUD (Phase 5) is next — the dashboard is auth-gated and real, but every create/edit/delete action is still a disabled placeholder.
+- Blog post bodies are still empty (`content` defaults to `""`) until posts are written through the CMS editor in Phase 5.
+- Cloudinary image upload (project screenshots, blog cover images) is bundled into Phase 5, alongside the CRUD forms that will use it.
+- SEO/Lighthouse polish (sitemap, structured data, final performance pass) is Phase 6.
 - The chat model (`openrouter/free`) can route to different underlying free models between requests; pin a specific model (see comments in `lib/ai/config.ts`) for reproducible demo behavior.
 - The resilience work (error handling, retry) was sabotage-tested against the dev server directly, but this session's sandbox couldn't reach `openrouter.ai` at all, so a full token-by-token happy-path stream and a real 429 weren't exercised live — only via a real thrown error (a 403 from the sandbox's own network block) and unit tests. Worth a manual pass with real network access before recording the Checkpoint 1 demo: send a real message end to end, and try triggering a 429 by sending several messages in quick succession.
+- This project's dev sandbox can't reach `binaries.prisma.sh` (network policy) or Neon's Postgres endpoint, so `prisma generate`, `next build`, and anything touching a live DB connection could only be verified by static review (`tsc --noEmit`, `eslint`, and the unit/component tests that don't need a live DB) — run the full `npm run build` and a real login locally before trusting this end to end.
 
 ## Author
 Ali Rayyan

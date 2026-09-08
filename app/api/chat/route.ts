@@ -41,7 +41,7 @@ import {
   toUIMessageStream,
   type UIMessage,
 } from "ai";
-import { chatModel, chatSettings, SYSTEM_PROMPT } from "@/lib/ai/config";
+import { chatModel, chatSettings, getSystemPrompt } from "@/lib/ai/config";
 import { portfolioTools } from "@/lib/ai/tools";
 import { describeError } from "@/lib/ai/errors";
 
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
   try {
     const result = streamText({
       model: chatModel,
-      system: SYSTEM_PROMPT,
+      system: await getSystemPrompt(),
       messages: await convertToModelMessages(messages, { tools: portfolioTools }),
       tools: portfolioTools,
       // Default stopWhen is a single step. Tool calls need at least one more

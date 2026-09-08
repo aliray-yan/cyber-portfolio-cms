@@ -13,13 +13,26 @@
  * plain Postgres connection string, which is exactly what Neon (or Supabase)
  * gives you — nothing Neon-specific is needed here, so switching providers
  * later, if that's ever wanted, wouldn't touch this file.
+ *
+ * Default import, not `import { PrismaClient } from "@prisma/client"` —
+ * the generated client's CJS output re-exports via `{ ...require(...) }`,
+ * a spread pattern Node's ESM loader can't statically see named exports
+ * through. Bundlers (Next.js's webpack/Turbopack) execute the module and
+ * don't care, so a named import works fine through the app — but this
+ * file is also reached by lib/ai/tools.test.ts under the plain
+ * `node --experimental-strip-types` test runner (see lib/data/projects.ts
+ * for why), which does care. The default-import form below is what Node's
+ * own error message recommends for exactly this situation, and works
+ * identically either way.
  */
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
+const { PrismaClient } = pkg;
+
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+  prisma: InstanceType<typeof PrismaClient> | undefined;
   pool: Pool | undefined;
 };
 

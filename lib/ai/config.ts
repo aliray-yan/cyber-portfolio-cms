@@ -49,10 +49,10 @@
 
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { SITE_OWNER, SITE_TAGLINE } from "@/lib/constants";
-import { PROJECTS } from "@/lib/data/projects";
-import { CERTIFICATIONS } from "@/lib/data/certifications";
-import { SKILL_CATEGORIES } from "@/lib/data/skills";
-import { EXPERIENCE } from "@/lib/data/experience";
+import { getAllProjects } from "@/lib/data/projects";
+import { getAllCertifications } from "@/lib/data/certifications";
+import { getSkillCategories } from "@/lib/data/skills";
+import { getExperience } from "@/lib/data/experience";
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -116,26 +116,45 @@ export const chatSettings = {
  * whole point of centralizing that data: the assistant's answers and the
  * page content share one source of truth and can't silently drift apart
  * when a project or skill gets added later.
+ *
+ * Now async because lib/data/* reads live from Postgres (Phase 3) instead
+ * of static arrays — this runs once per chat request (see getSystemPrompt
+ * below), not once at module load, so an edit made through the CMS
+ * dashboard (Phase 5) shows up in the assistant's answers on the very next
+ * message, without a server restart or redeploy.
  */
-function buildPortfolioContext(): string {
-  const experienceLines = EXPERIENCE.map(
-    (entry) =>
-      `- ${entry.role}, ${entry.organization} (${entry.period}): ${entry.description}`,
-  ).join("\n");
+async function buildPortfolioContext(): Promise<string> {
+  const [experience, projects, certifications, skillCategories] = await Promise.all([
+    getExperience(),
+    getAllProjects(),
+    getAllCertifications(),
+    getSkillCategories(),
+  ]);
 
-  const projectLines = PROJECTS.map(
-    (project) =>
-      `- ${project.title} [${project.category}] (${project.tags.join(", ")}): ${project.description}`,
-  ).join("\n");
+  const experienceLines = experience
+    .map(
+      (entry) =>
+        `- ${entry.role}, ${entry.organization} (${entry.period}): ${entry.description}`,
+    )
+    .join("\n");
 
-  const certificationLines = CERTIFICATIONS.map(
-    (cert) => `- ${cert.name}, ${cert.issuer} (${cert.year})`,
-  ).join("\n");
+  const projectLines = projects
+    .map(
+      (project) =>
+        `- ${project.title} [${project.category}] (${project.tags.join(", ")}): ${project.description}`,
+    )
+    .join("\n");
 
-  const skillLines = SKILL_CATEGORIES.map(
-    (category) =>
-      `- ${category.title}: ${category.skills.map((s) => s.name).join(", ")}`,
-  ).join("\n");
+  const certificationLines = certifications
+    .map((cert) => `- ${cert.name}, ${cert.issuer} (${cert.year})`)
+    .join("\n");
+
+  const skillLines = skillCategories
+    .map(
+      (category) =>
+        `- ${category.title}: ${category.skills.map((s) => s.name).join(", ")}`,
+    )
+    .join("\n");
 
   return `
 Owner: ${SITE_OWNER}
@@ -158,17 +177,19 @@ ${skillLines}
 `.trim();
 }
 
-const PORTFOLIO_CONTEXT = buildPortfolioContext();
-
 /**
- * System prompt.
+ * The static instructional part of the system prompt — scope, tool
+ * guidance, guidelines. This never changes per-request, so it's kept
+ * separate from the (now per-request, DB-backed) portfolio context and
+ * only combined with it inside getSystemPrompt() below.
  *
  * Scope, per product decision: this assistant answers (1) questions about
  * Ali's portfolio — projects, skills, certifications, background — and
  * (2) general cybersecurity questions a recruiter or visitor might ask.
  * It should NOT behave as an unscoped general-purpose assistant.
  */
-export const SYSTEM_PROMPT = `
+function buildSystemPrompt(portfolioContext: string): string {
+  return `
 You are the AI assistant embedded on Ali Rayyan's cybersecurity portfolio website.
 You are speaking directly to a site visitor — often a recruiter, hiring manager, or
 fellow student — not to Ali himself.
@@ -210,5 +231,18 @@ Guidelines:
   or long code blocks — this is a chat widget, not a document.
 
 PORTFOLIO CONTEXT:
-${PORTFOLIO_CONTEXT}
+${portfolioContext}
 `.trim();
+}
+
+/**
+ * Assembles the full system prompt for one chat request: static
+ * instructions + a freshly-fetched portfolio context. Called once per
+ * POST in app/api/chat/route.ts — deliberately NOT cached at module
+ * scope, so a project/skill/cert edit made in the CMS dashboard is
+ * reflected in the very next chat message rather than requiring a
+ * redeploy or process restart.
+ */
+export async function getSystemPrompt(): Promise<string> {
+  return buildSystemPrompt(await buildPortfolioContext());
+}

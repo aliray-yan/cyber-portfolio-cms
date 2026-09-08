@@ -1,9 +1,12 @@
 /**
  * lib/data/experience.ts
  * ─────────────────────────────────────────────────────────────────────────
- * Internship / work history, read by the About page. Sourced from the
- * "Experience" section of Ali's live portfolio.
+ * Live experience-entry reads, backed by Postgres via Prisma. See the note
+ * at the top of lib/data/projects.ts for why this uses a relative import
+ * for lib/db and a hand-written row shape instead of importing generated
+ * Prisma types.
  */
+import { prisma } from "../db.ts";
 
 export interface ExperienceEntry {
   role: string;
@@ -12,33 +15,23 @@ export interface ExperienceEntry {
   description: string;
 }
 
-export const EXPERIENCE: ExperienceEntry[] = [
-  {
-    role: "SOC Analyst Intern — Blue Team",
-    organization: "Cyberster",
-    period: "Mar – May 2026",
-    description:
-      "Deployed a Wazuh 4.14 SIEM lab, wrote MITRE-mapped detection rules, integrated FortiGate logging, simulated insider-threat activity, and produced a NIST SP 800-61 incident report.",
-  },
-  {
-    role: "Cybersecurity Threat Research Intern",
-    organization: "Tech Hierarchy",
-    period: "Mar – Apr 2026",
-    description:
-      "Researched major incidents including FBR tax fraud, TPS ransomware, and the MOVEit CVE-2023-34362 exploit, mapping TTPs to MITRE ATT&CK and writing defense-focused recommendations.",
-  },
-  {
-    role: "Cybersecurity Analyst",
-    organization: "Talosec",
-    period: "Dec 2025 – Feb 2026",
-    description:
-      "Designed an enterprise SOC virtual lab with VMware, FortiGate, and Active Directory, then configured Wazuh dashboards and rules for reconnaissance and brute-force detection.",
-  },
-  {
-    role: "SOC Analyst Apprentice",
-    organization: "Empirical Training",
-    period: "Jun – Aug 2025",
-    description:
-      "Investigated alerts in Sentinel and Sumo Logic labs, built Elastic/Tines automation, deployed Suricata IDS and honeypots, and created an n8n threat intelligence pipeline.",
-  },
-];
+interface ExperienceRow {
+  role: string;
+  organization: string;
+  period: string;
+  description: string;
+}
+
+function toExperienceEntry(row: ExperienceRow): ExperienceEntry {
+  return {
+    role: row.role,
+    organization: row.organization,
+    period: row.period,
+    description: row.description,
+  };
+}
+
+export async function getExperience(): Promise<ExperienceEntry[]> {
+  const rows = await prisma.experienceEntry.findMany({ orderBy: { order: "asc" } });
+  return rows.map(toExperienceEntry);
+}

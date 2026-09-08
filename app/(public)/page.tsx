@@ -5,10 +5,13 @@ import LinkButton from "@/components/ui/LinkButton";
 import Reveal from "@/components/motion/Reveal";
 import { SITE_OWNER } from "@/lib/constants";
 import { getFeaturedProjects } from "@/lib/data/projects";
-import { SKILL_CATEGORIES } from "@/lib/data/skills";
+import { getSkillCategories } from "@/lib/data/skills";
 
-export default function HomePage() {
-  const featuredProjects = getFeaturedProjects(3);
+export default async function HomePage() {
+  const [featuredProjects, skillCategories] = await Promise.all([
+    getFeaturedProjects(3),
+    getSkillCategories(),
+  ]);
 
   return (
     <>
@@ -99,7 +102,7 @@ export default function HomePage() {
           <h2 className="font-display mt-2 text-2xl font-semibold text-foreground">Core Skills</h2>
 
           <Reveal trigger="scroll" staggerMs={120} className="mt-10 grid gap-8 md:grid-cols-3">
-            {SKILL_CATEGORIES.map((category) => (
+            {skillCategories.map((category) => (
               <div key={category.title}>
                 <h3 className="font-mono text-sm font-medium uppercase tracking-wide text-primary">
                   {category.title}

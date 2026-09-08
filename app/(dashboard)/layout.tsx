@@ -1,17 +1,26 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import DashboardSidebar from "@/components/layout/DashboardSidebar";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // middleware.ts already gates /dashboard/* — this is defense in depth,
+  // not the primary check. Rendering sensitive layout (the sidebar's admin
+  // email, whatever CMS content lands here in Phase 5) should never depend
+  // on a single check succeeding.
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
-      <DashboardSidebar />
+      <DashboardSidebar adminEmail={session.user.email ?? "Admin"} />
       <div className="flex-1">
-        <div className="border-b border-border bg-destructive/10 px-6 py-2 text-center text-xs text-destructive md:text-left">
-          Protected route — authentication coming in Phase 4.
-        </div>
         <main className="px-6 py-10 md:px-10">{children}</main>
       </div>
     </div>

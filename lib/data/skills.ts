@@ -1,10 +1,12 @@
 /**
  * lib/data/skills.ts
  * ─────────────────────────────────────────────────────────────────────────
- * Skill data, read by /skills and the home page's "Core Skills" preview
- * (which just maps over category → skill names, ignoring proficiency).
- * Sourced from the "Skill Stack" section of Ali's live portfolio.
+ * Live skill reads, backed by Postgres via Prisma. See the note at the top
+ * of lib/data/projects.ts for why this uses a relative import for lib/db
+ * and a hand-written row shape instead of importing generated Prisma
+ * types.
  */
+import { prisma } from "../db.ts";
 
 export type ProficiencyLevel = "Beginner" | "Intermediate" | "Advanced";
 
@@ -18,34 +20,25 @@ export interface SkillCategory {
   skills: Skill[];
 }
 
-export const SKILL_CATEGORIES: SkillCategory[] = [
-  {
-    title: "SOC & SIEM",
-    skills: [
-      { name: "Wazuh", level: "Advanced" },
-      { name: "Microsoft Sentinel", level: "Intermediate" },
-      { name: "Elastic SIEM", level: "Intermediate" },
-      { name: "Suricata", level: "Intermediate" },
-      { name: "Sumo Logic", level: "Intermediate" },
-    ],
-  },
-  {
-    title: "Recon & Assessment",
-    skills: [
-      { name: "Nmap", level: "Advanced" },
-      { name: "Nessus", level: "Intermediate" },
-      { name: "Shodan", level: "Intermediate" },
-      { name: "SpiderFoot", level: "Beginner" },
-    ],
-  },
-  {
-    title: "Automation & Development",
-    skills: [
-      { name: "n8n", level: "Advanced" },
-      { name: "Tines", level: "Intermediate" },
-      { name: "TypeScript / JavaScript", level: "Advanced" },
-      { name: "React / Next.js", level: "Intermediate" },
-      { name: "Python", level: "Intermediate" },
-    ],
-  },
-];
+interface SkillCategoryRow {
+  title: string;
+  skills: { name: string; level: string }[];
+}
+
+function toSkillCategory(row: SkillCategoryRow): SkillCategory {
+  return {
+    title: row.title,
+    skills: row.skills.map((skill) => ({
+      name: skill.name,
+      level: skill.level as ProficiencyLevel,
+    })),
+  };
+}
+
+export async function getSkillCategories(): Promise<SkillCategory[]> {
+  const rows = await prisma.skillCategory.findMany({
+    orderBy: { order: "asc" },
+    include: { skills: { orderBy: { order: "asc" } } },
+  });
+  return rows.map(toSkillCategory);
+}

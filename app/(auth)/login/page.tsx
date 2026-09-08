@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { SITE_NAME } from "@/lib/constants";
+import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
   title: "Admin Login | Cyber Portfolio CMS",
   description: "Sign in to manage your portfolio content.",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex min-h-dvh items-center justify-center px-6">
       <div className="w-full max-w-sm rounded-xl border border-border/70 bg-card p-8 shadow-sm shadow-black/3 dark:shadow-black/20">
@@ -17,34 +24,7 @@ export default function LoginPage() {
           Admin Login
         </h1>
 
-        <form className="mt-8 space-y-5">
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            label="Email"
-            disabled
-            placeholder="you@example.com"
-            tone="inset"
-          />
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            label="Password"
-            disabled
-            placeholder="••••••••"
-            tone="inset"
-          />
-
-          <Button type="button" disabled fullWidth>
-            Log In
-          </Button>
-        </form>
-
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Authentication coming in Phase 4.
-        </p>
+        <LoginForm />
       </div>
     </div>
   );

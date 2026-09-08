@@ -1,19 +1,19 @@
 /**
  * prisma/seed.ts
  * ─────────────────────────────────────────────────────────────────────────
- * Populates a fresh database with exactly what the site already shows via
- * the static lib/data/*.ts arrays — run this once after the first migration
- * so the DB-backed site looks identical to today's static one, not empty.
+ * Populates a fresh database from the static content in prisma/seed-data/
+ * — run this once after the first migration so the DB-backed site has real
+ * content instead of empty tables. That content used to live directly in
+ * lib/data/*.ts; it moved to prisma/seed-data/ once those modules switched
+ * to live Prisma queries (Phase 3) — lib/data no longer holds any static
+ * arrays for this script to import.
  *
- * Imports the real lib/data modules directly rather than duplicating their
- * content here, so there is exactly one place that content can drift out of
- * sync from (there isn't one — this file always seeds whatever's currently
- * in lib/data).
- *
- * Idempotent by design: safe to run again later (e.g. after editing the
- * static arrays, before lib/data/*.ts is switched over to real queries) —
- * every table is fully reset before insert rather than appended to, so
- * re-running never produces duplicates.
+ * Idempotent by design: safe to run again later (e.g. to reset back to
+ * "factory" content after testing CMS edits) — every table is fully reset
+ * before insert rather than appended to, so re-running never produces
+ * duplicates. Note: re-seeding does NOT touch blog_posts.content — that
+ * column is written only through the CMS editor (Phase 5), never by this
+ * script, so re-seeding never wipes an authored post body.
  *
  * Run directly, per prisma.config.ts's migrations.seed:
  *   npx prisma db seed
@@ -22,18 +22,20 @@
  * this runs under Node's native --experimental-strip-types, which resolves
  * modules the way Node itself does, not the way Next.js's bundler does. The
  * same constraint already applies to lib/ai/*.test.ts (see package.json's
- * test:unit script).
+ * test:unit script). For the same reason, @prisma/client is imported as a
+ * default import below rather than a named one — see lib/db.ts's comment
+ * on this for why.
  */
 import path from "node:path";
 import { config } from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import prismaPkg from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
-import { PROJECTS } from "../lib/data/projects.ts";
-import { SKILL_CATEGORIES } from "../lib/data/skills.ts";
-import { CERTIFICATIONS } from "../lib/data/certifications.ts";
-import { BLOG_POSTS } from "../lib/data/blog.ts";
-import { EXPERIENCE } from "../lib/data/experience.ts";
+import { PROJECTS } from "./seed-data/projects.ts";
+import { SKILL_CATEGORIES } from "./seed-data/skills.ts";
+import { CERTIFICATIONS } from "./seed-data/certifications.ts";
+import { BLOG_POSTS } from "./seed-data/blog.ts";
+import { EXPERIENCE } from "./seed-data/experience.ts";
 
 // When Prisma spawns this via `prisma db seed`, DATABASE_URL is already in
 // the environment (inherited from prisma.config.ts's own loading). This
@@ -45,6 +47,7 @@ config({ path: path.resolve(import.meta.dirname, "..", ".env.local") });
 config({ path: path.resolve(import.meta.dirname, "..", ".env") });
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const { PrismaClient } = prismaPkg;
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 async function seedProjects() {

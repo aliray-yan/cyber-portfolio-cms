@@ -39,8 +39,51 @@ import { z } from "zod";
 // Next's bundler (which resolves the "@/" alias fine) and directly by Node
 // for tools.test.ts (which only understands real relative paths). A
 // relative import here works for both without any extra loader config.
-import { PROJECTS } from "../data/projects.ts";
-import { SKILL_CATEGORIES } from "../data/skills.ts";
+import { getAllProjects, type Project } from "../data/projects.ts";
+import { getSkillCategories, type SkillCategory } from "../data/skills.ts";
+
+/**
+ * Pure filtering/selection logic, factored out of execute() below and
+ * exported so tools.test.ts can exercise it directly against small fixture
+ * arrays — no live database needed. execute() itself still always reads
+ * live via getAllProjects()/getSkillCategories(); these two functions are
+ * what it reads *with*, not a replacement for reading live data.
+ */
+export function filterProjects(
+  projects: Project[],
+  { query, category, limit }: { query?: string; category?: string; limit?: number },
+): { allMatches: Project[]; matches: Project[] } {
+  const max = limit ?? 6;
+  const needle = query?.trim().toLowerCase();
+
+  const allMatches = projects.filter((project) => {
+    if (category && project.category !== category) return false;
+    if (!needle) return true;
+    const haystack = `${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase();
+    return haystack.includes(needle);
+  });
+
+  return { allMatches, matches: allMatches.slice(0, max) };
+}
+
+export function selectSkillCategories(
+  categories: SkillCategory[],
+  category?: string,
+): SkillCategory[] {
+  if (!category) return categories;
+
+  const needle = category.trim().toLowerCase();
+  const matched = categories.filter((entry) => entry.title.toLowerCase().includes(needle));
+
+  if (matched.length === 0) {
+    const available = categories.map((entry) => entry.title).join(", ");
+    throw new Error(
+      `No skill category matches "${category}". Ali's real categories are: ${available}.`,
+    );
+  }
+
+  return matched;
+}
 
 const PROJECT_CATEGORIES = ["Security", "Development", "Research"] as const;
 
@@ -89,17 +132,8 @@ export const searchProjects = tool({
       .describe("Max number of projects to return. Defaults to 6."),
   }),
   execute: async ({ query, category, limit }) => {
-    const max = limit ?? 6;
-    const needle = query?.trim().toLowerCase();
-
-    const allMatches = PROJECTS.filter((project) => {
-      if (category && project.category !== category) return false;
-      if (!needle) return true;
-      const haystack = `${project.title} ${project.description} ${project.tags.join(" ")}`.toLowerCase();
-      return haystack.includes(needle);
-    });
-
-    const matches = allMatches.slice(0, max);
+    const projects = await getAllProjects();
+    const { allMatches, matches } = filterProjects(projects, { query, category, limit });
 
     return {
       query: query ?? null,
@@ -149,26 +183,8 @@ export const getSkillsRadar = tool({
       ),
   }),
   execute: async ({ category }) => {
-    let selected = SKILL_CATEGORIES;
-
-    if (category) {
-      const needle = category.trim().toLowerCase();
-      const matched = SKILL_CATEGORIES.filter((entry) =>
-        entry.title.toLowerCase().includes(needle),
-      );
-
-      if (matched.length === 0) {
-        const available = SKILL_CATEGORIES.map((entry) => entry.title).join(
-          ", ",
-        );
-        throw new Error(
-          `No skill category matches "${category}". Ali's real categories ` +
-            `are: ${available}.`,
-        );
-      }
-
-      selected = matched;
-    }
+    const categories = await getSkillCategories();
+    const selected = selectSkillCategories(categories, category);
 
     return {
       categories: selected.map((entry) => ({

@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
-import { SKILL_CATEGORIES } from "@/lib/data/skills";
+import { getSkillCategories } from "@/lib/data/skills";
 
 export const metadata: Metadata = {
   title: "Skills | Cyber Portfolio CMS",
   description: "Technical abilities across security and development.",
 };
 
-export default function SkillsPage() {
+export default async function SkillsPage() {
+  const skillCategories = await getSkillCategories();
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <PageHeader title="Skills" />
 
       <div className="mt-10 grid gap-8 md:grid-cols-3">
-        {SKILL_CATEGORIES.map((category) => (
+        {skillCategories.map((category) => (
           <div key={category.title}>
             <h2 className="font-mono text-xs font-medium uppercase tracking-wide text-primary">
               {category.title}
