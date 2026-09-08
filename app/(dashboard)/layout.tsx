@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import DashboardSidebar from "@/components/layout/DashboardSidebar";
+
+// Applies to every /dashboard/* page below (none of them override
+// `robots` themselves) — admin screens have no business in a search
+// index, on top of already being auth-gated. Backed up by the Disallow
+// rule in app/robots.ts; this covers the (unlikely, but free to prevent)
+// case of a crawler that ignores robots.txt but respects the meta tag.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardLayout({
   children,

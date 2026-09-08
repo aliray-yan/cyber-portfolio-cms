@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
   // (the pg-based driver adapter, and staying on the prisma-client-js
   // generator rather than Prisma 7's newer prisma-client one).
   serverExternalPackages: ["@prisma/client", "pg"],
+  images: {
+    remotePatterns: [
+      // Cloudinary — where project screenshots and blog cover images
+      // uploaded through the CMS dashboard (Phase 5) actually live.
+      { protocol: "https", hostname: "res.cloudinary.com" },
+    ],
+  },
 };
 
 export default nextConfig;

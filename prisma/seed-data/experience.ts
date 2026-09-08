@@ -4,9 +4,9 @@
  * Seed content for the `experience_entries` table. See the note at the top
  * of prisma/seed-data/projects.ts.
  */
-import type { ExperienceEntry } from "../../lib/data/experience.ts";
+import type { ExperienceEntrySeed } from "../../lib/data/experience.ts";
 
-export const EXPERIENCE: ExperienceEntry[] = [
+export const EXPERIENCE: ExperienceEntrySeed[] = [
   {
     role: "SOC Analyst Intern — Blue Team",
     organization: "Cyberster",

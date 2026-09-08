@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import { getAllCertifications } from "@/lib/data/certifications";
 
-export const metadata: Metadata = {
-  title: "Certifications | Cyber Portfolio CMS",
+export const metadata: Metadata = buildMetadata({
+  title: "Certifications",
   description: "Professional development and verified credentials.",
-};
+  path: "/certifications",
+});
 
 export default async function CertificationsPage() {
   const certifications = await getAllCertifications();

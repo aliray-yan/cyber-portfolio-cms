@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
-import PlaceholderBanner from "@/components/ui/PlaceholderBanner";
 import { getExperience } from "@/lib/data/experience";
 
-export const metadata: Metadata = {
-  title: "About | Cyber Portfolio CMS",
+export const metadata: Metadata = buildMetadata({
+  title: "About",
   description: "Professional background, education, and career goals.",
-};
+  path: "/about",
+});
 
 export default async function AboutPage() {
   const experience = await getExperience();
@@ -84,13 +85,6 @@ export default async function AboutPage() {
           )}
         </ul>
       </section>
-
-      <div className="mt-12">
-        <PlaceholderBanner
-          message="Content managed via CMS."
-          phase="Phase 5"
-        />
-      </div>
     </div>
   );
 }

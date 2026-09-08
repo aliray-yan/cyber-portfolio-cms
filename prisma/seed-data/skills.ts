@@ -5,9 +5,9 @@
  * at the top of prisma/seed-data/projects.ts — same deal, moved out of
  * lib/data/skills.ts now that that module reads live from the database.
  */
-import type { SkillCategory } from "../../lib/data/skills.ts";
+import type { SkillCategorySeed } from "../../lib/data/skills.ts";
 
-export const SKILL_CATEGORIES: SkillCategory[] = [
+export const SKILL_CATEGORIES: SkillCategorySeed[] = [
   {
     title: "SOC & SIEM",
     skills: [

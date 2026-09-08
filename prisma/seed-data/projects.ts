@@ -8,9 +8,9 @@
  * CMS dashboard (Phase 5) — re-running `npm run db:seed` resets to exactly
  * what's below, so treat this file as "factory defaults," not a live source.
  */
-import type { Project } from "../../lib/data/projects.ts";
+import type { ProjectSeed } from "../../lib/data/projects.ts";
 
-export const PROJECTS: Project[] = [
+export const PROJECTS: ProjectSeed[] = [
   {
     slug: "secureops-workbench",
     title: "SecureOps SOC Analyst Workbench",

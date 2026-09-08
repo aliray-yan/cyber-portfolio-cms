@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/contact/ContactForm";
 import { GITHUB_URL, LINKEDIN_URL, SITE_EMAIL } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "Contact | Cyber Portfolio CMS",
+export const metadata: Metadata = buildMetadata({
+  title: "Contact",
   description: "Get in touch.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

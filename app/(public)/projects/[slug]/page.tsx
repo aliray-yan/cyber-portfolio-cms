@@ -1,11 +1,29 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Image from "next/image";
 import PageHeader from "@/components/ui/PageHeader";
 import Badge from "@/components/ui/Badge";
 import LinkButton from "@/components/ui/LinkButton";
+import { buildMetadata } from "@/lib/seo";
 import { getProjectBySlug } from "@/lib/data/projects";
 
 interface ProjectDetailPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ProjectDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+
+  if (!project) {
+    return { title: "Project Not Found" };
+  }
+
+  return buildMetadata({
+    title: project.title,
+    description: project.description,
+    path: `/projects/${project.slug}`,
+  });
 }
 
 export default async function ProjectDetailPage({
@@ -32,6 +50,18 @@ export default async function ProjectDetailPage({
           )
         }
       />
+
+      {project.imageUrl && (
+        <div className="relative mt-6 h-64 overflow-hidden rounded-xl border border-border/70 sm:h-80">
+          <Image
+            src={project.imageUrl}
+            alt={`Screenshot of ${project.title}`}
+            fill
+            sizes="(min-width: 768px) 56rem, 100vw"
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge>{project.category}</Badge>

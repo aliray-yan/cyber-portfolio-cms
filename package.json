@@ -28,6 +28,7 @@
     "ai": "^7.0.55",
     "animejs": "^4.5.0",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
     "dotenv": "^17.4.2",
     "next": "16.2.12",
     "next-auth": "^5.0.0-beta.32",

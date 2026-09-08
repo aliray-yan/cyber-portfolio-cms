@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import { getSkillCategories } from "@/lib/data/skills";
 
-export const metadata: Metadata = {
-  title: "Skills | Cyber Portfolio CMS",
+export const metadata: Metadata = buildMetadata({
+  title: "Skills",
   description: "Technical abilities across security and development.",
-};
+  path: "/skills",
+});
 
 export default async function SkillsPage() {
   const skillCategories = await getSkillCategories();

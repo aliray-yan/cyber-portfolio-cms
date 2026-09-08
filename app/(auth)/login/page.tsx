@@ -5,8 +5,9 @@ import { SITE_NAME } from "@/lib/constants";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
-  title: "Admin Login | Cyber Portfolio CMS",
+  title: "Admin Login",
   description: "Sign in to manage your portfolio content.",
+  robots: { index: false, follow: false },
 };
 
 export default async function LoginPage() {

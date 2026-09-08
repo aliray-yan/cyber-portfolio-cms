@@ -4,7 +4,7 @@ import Card from "@/components/ui/Card";
 import { SITE_EMAIL, SITE_OWNER, SITE_TAGLINE } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Settings | Cyber Portfolio CMS",
+  title: "Settings",
 };
 
 export default function DashboardSettingsPage() {
@@ -60,7 +60,11 @@ export default function DashboardSettingsPage() {
       </div>
 
       <p className="mt-8 text-xs text-muted-foreground">
-        Settings management coming in Phase 5.
+        Read-only for now — profile, social links, and resume aren&apos;t
+        backed by a database table yet, unlike projects, blog posts,
+        certifications, skills, and experience (all fully editable above in
+        the sidebar). Editing these would need a small schema addition, not
+        yet built.
       </p>
     </div>
   );

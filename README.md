@@ -13,12 +13,16 @@ https://cyber-portfolio-cms.vercel.app/
 | 2 — UI Development | Real content, design system, light/dark theme, component library, AI assistant + tool calling | ✅ Done |
 | 3 — Database & Data Layer | Prisma + Neon, replace `lib/data/*.ts` with real queries | ✅ Done |
 | 4 — Authentication | Auth.js, protect `/dashboard/*` | ✅ Done |
-| 5 — CMS Functionality | Real CRUD for projects/blog/certs/skills, Cloudinary upload | ⬜ Not started |
-| 6 — Polish & Launch | SEO, Lighthouse pass, final docs | ⬜ Not started |
+| 5 — CMS Functionality | Real CRUD for projects/blog/certs/skills/experience, Cloudinary upload | ✅ Done |
+| 6 — Polish & Launch | SEO, Lighthouse pass, final docs | ✅ Done |
 
 `lib/data/*.ts` reads live from Postgres via Prisma (`lib/db.ts`) — the original static arrays now live in `prisma/seed-data/*.ts` and only matter for `npm run db:seed` (fresh databases, or resetting to "factory" content). The AI assistant's system prompt is rebuilt from the same live data on every chat request, so a CMS edit shows up in its answers immediately.
 
-`/dashboard/*` requires signing in at `/login` — single-admin credentials via Auth.js (`ADMIN_EMAIL` + a bcrypt-hashed `ADMIN_PASSWORD_HASH`, see `.env.example`), no users table. CRUD forms themselves are still Phase 5 — the dashboard currently shows real auth-gated placeholder pages, not yet editable content.
+`/dashboard/*` requires signing in at `/login` — single-admin credentials via Auth.js (`ADMIN_EMAIL` + a bcrypt-hashed `ADMIN_PASSWORD_HASH`, see `.env.example`). Every resource — projects, blog posts, certifications, skills, experience — has real create/edit/delete forms backed by server actions, with Zod validation and Cloudinary image upload for project screenshots and blog cover images. Settings is still read-only (profile/social/resume aren't backed by a database table — a future schema addition, not yet built).
+
+Every public page has real metadata — canonical URLs, OpenGraph/Twitter cards, and a per-project/per-post title and description generated from live data (`lib/seo.ts`) rather than one generic title site-wide. `/sitemap.xml` and `/robots.txt` are generated dynamically (`app/sitemap.ts`, `app/robots.ts`) — the sitemap pulls current project and blog slugs straight from the database, and the admin dashboard is excluded from both. The homepage carries JSON-LD `Person` structured data, and the OG image, Twitter card image, and favicon are all generated at request time (`app/opengraph-image.tsx`, `app/twitter-image.tsx`, `app/icon.tsx`) rather than static files.
+
+**All six phases are now complete.** See [Known Limitations / Next Steps](#known-limitations--next-steps) for what's deliberately out of scope.
 
 **Week 5 also included a second assignment — resilience/error handling for the chat flow.** See [Resilience & Error Handling](#resilience--error-handling) below.
 
@@ -27,6 +31,9 @@ https://cyber-portfolio-cms.vercel.app/
 - Tailwind CSS v4
 - Prisma 7 (driver adapters, `@prisma/adapter-pg`) + Neon Postgres
 - Auth.js (next-auth v5) — Credentials provider, JWT sessions, single admin
+- Cloudinary — image upload for project screenshots and blog cover images
+- Zod — server-side form validation for every CMS resource
+- `next/og` (`ImageResponse`) — dynamic OG image, Twitter card image, and favicon; no static image assets
 - Vercel AI SDK (`ai` v7, `@ai-sdk/react`) + OpenRouter — streaming chat with server- and client-side tool calling
 - Anime.js v4 — entrance/reveal animations and tool-call state transitions
 - next-themes — light/dark mode
@@ -167,10 +174,12 @@ npm run db:seed       # populates it from prisma/seed-data/*.ts
 # add AUTH_SECRET (openssl rand -base64 33) and AUTH_URL=http://localhost:3000
 # add ADMIN_EMAIL, and ADMIN_PASSWORD_HASH via:
 npm run hash-password -- "your-password"
+# add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+# (free tier at https://cloudinary.com — needed for project/blog image upload)
 npm run dev
 ```
 
-On Vercel: Project → Settings → Environment Variables → add `OPENROUTER_API_KEY`, `DATABASE_URL`, `AUTH_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH` for Production, Preview, and Development (`AUTH_URL` isn't needed there — Auth.js infers it on Vercel), then redeploy.
+On Vercel: Project → Settings → Environment Variables → add `OPENROUTER_API_KEY`, `DATABASE_URL`, `AUTH_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` for Production, Preview, and Development (`AUTH_URL` isn't needed there — Auth.js infers it on Vercel), then redeploy.
 
 ## Project Structure
 
@@ -179,15 +188,25 @@ app/
   (public)/            -> Navbar + Footer + ChatWidget wrap every visitor-facing route
   (auth)/login/        -> Real Auth.js login (server action + useActionState form)
   (dashboard)/         -> Admin routes; gated by proxy.ts + a session check in layout.tsx.
-                           CRUD actions themselves are still disabled placeholders until Phase 5
+                           Real CRUD (create/edit/delete) for every resource, each with its own
+                           actions.ts (server actions), new/ and [id]/edit/ routes
   api/auth/[...nextauth]/route.ts -> Auth.js route handler (sign-in/out, session, callbacks)
   api/chat/route.ts    -> Streaming chat endpoint — wires portfolioTools into streamText, layered error handling
   error.tsx             -> Route-segment error boundary (page-level failures)
   global-error.tsx       -> Last-resort boundary if the root layout itself throws
   health/              -> Server-side health check (proves SSR works)
+  sitemap.ts            -> /sitemap.xml — static routes + live project/blog slugs (Phase 6)
+  robots.ts             -> /robots.txt — disallows /dashboard, /login, /api (Phase 6)
+  opengraph-image.tsx    -> Default OG/social preview image, generated at request time (Phase 6)
+  twitter-image.tsx      -> Same, for Twitter's card image (Phase 6)
+  icon.tsx              -> Favicon, generated at request time (Phase 6)
 
 components/
-  ui/                  -> Button, LinkButton, Card, Badge, Input, PageHeader, EmptyState, StatCard, ...
+  ui/                  -> Button, LinkButton, Card, Badge, Input, Textarea, Select, PageHeader,
+                           EmptyState, StatCard, ...
+  dashboard/            -> ProjectForm, BlogPostForm, CertificationForm, ExperienceForm,
+                            SkillCategoryForm, SkillForm, ImageUploadField, DeleteButton — the
+                            CMS's shared form/list building blocks (Phase 5)
   layout/               -> Navbar, Footer, DashboardSidebar (session-aware, sign-out), NavLink
   theme/                -> ThemeProvider, ThemeToggle (light/dark)
   motion/               -> Reveal (Anime.js entrance/scroll-reveal primitive)
@@ -204,16 +223,22 @@ lib/
   ai/errors.test.ts       -> Automated tests for describeError()
   ai/message-types.ts    -> InferUITools wiring — fully typed UIMessage for the chat widget
   motion/useStateTransition.ts -> Anime.js crossfade hook for tool-part states and the error banner
-  data/                  -> projects, certifications, skills, experience, blog — live Prisma reads
+  data/                  -> projects, certifications, skills, experience, blog — live Prisma reads;
+                             each also exports a getXById() for the dashboard's edit forms
+  validations/            -> One Zod schema per CMS resource, shared by that resource's server actions
   db.ts                  -> The one PrismaClient instance (driver adapter, Neon-ready)
+  cloudinary.ts            -> uploadImage() — validates type/size, uploads, returns a secure URL
+  seo.ts                  -> buildMetadata() / buildPersonJsonLd() — shared SEO helpers (Phase 6)
   auth.config.ts          -> Edge-safe Auth.js config (routing rules) — used by proxy.ts
   auth.ts                 -> Full Auth.js config (Credentials provider, bcrypt) — used by server code
   auth-actions.ts          -> signOutAction server action
+  require-admin.ts         -> requireAdminSession() — every mutating server action calls this first
   constants.ts            -> Site-wide constants, nav links, real contact info
   utils.ts                -> cn() class-merge helper
 
 prisma/
   schema.prisma          -> Data model (Project, SkillCategory, Skill, Certification, BlogPost, ExperienceEntry)
+  migrations/             -> 20260906190827_init (Phase 3), 20260908120000_add_image_urls (Phase 5)
   seed.ts                 -> Populates the DB from prisma/seed-data/*.ts (npm run db:seed)
   seed-data/              -> The "factory" content — moved out of lib/data/*.ts once those switched to live queries
 
@@ -225,13 +250,15 @@ proxy.ts                 -> Route protection for /dashboard/* (Next 16's replace
 
 ## Known Limitations / Next Steps
 
-- CMS CRUD (Phase 5) is next — the dashboard is auth-gated and real, but every create/edit/delete action is still a disabled placeholder.
-- Blog post bodies are still empty (`content` defaults to `""`) until posts are written through the CMS editor in Phase 5.
-- Cloudinary image upload (project screenshots, blog cover images) is bundled into Phase 5, alongside the CRUD forms that will use it.
-- SEO/Lighthouse polish (sitemap, structured data, final performance pass) is Phase 6.
+- Settings (`/dashboard/settings`) is read-only — profile bio, social links, and resume aren't backed by a database table yet; that'd need a small schema addition (e.g. a single-row `SiteSettings` model), not built here.
+- No "remove image" control on the edit forms — uploading a new image replaces the old one, but there's no way to clear an image back to none without going into Prisma Studio (`npm run db:studio`) directly.
+- Replaced/deleted images aren't cleaned up on Cloudinary — the old asset is simply orphaned there rather than deleted. Fine at this scale (a personal portfolio, occasional edits); would want `cloudinary.uploader.destroy()` wiring if this saw heavier use.
+- No custom font in the generated OG image/favicon (`app/opengraph-image.tsx`, `app/icon.tsx`) — deliberately: a system sans-serif keeps image generation dependency-free. Loading Space Grotesk there is possible (fetch the font file and pass it to `ImageResponse`'s `fonts` option) but wasn't worth the added failure mode for this.
+- Only the homepage carries JSON-LD (`Person` schema). Adding `Article`/`CreativeWork` schema to individual project and blog post pages would be a reasonable next SEO step, not done here.
+- Real Lighthouse numbers weren't re-measured after this session's changes — this sandbox can't reach Google Fonts or run a full `next build` (see below), so there's no way to run Lighthouse against the actual result here. Worth a real Lighthouse pass on the deployed site to confirm the metadata/sitemap/image work actually moved the score.
 - The chat model (`openrouter/free`) can route to different underlying free models between requests; pin a specific model (see comments in `lib/ai/config.ts`) for reproducible demo behavior.
 - The resilience work (error handling, retry) was sabotage-tested against the dev server directly, but this session's sandbox couldn't reach `openrouter.ai` at all, so a full token-by-token happy-path stream and a real 429 weren't exercised live — only via a real thrown error (a 403 from the sandbox's own network block) and unit tests. Worth a manual pass with real network access before recording the Checkpoint 1 demo: send a real message end to end, and try triggering a 429 by sending several messages in quick succession.
-- This project's dev sandbox can't reach `binaries.prisma.sh` (network policy) or Neon's Postgres endpoint, so `prisma generate`, `next build`, and anything touching a live DB connection could only be verified by static review (`tsc --noEmit`, `eslint`, and the unit/component tests that don't need a live DB) — run the full `npm run build` and a real login locally before trusting this end to end.
+- This project's dev sandbox can't reach `binaries.prisma.sh` (network policy), Neon's Postgres endpoint, or Google Fonts, so `prisma generate`, `next build`, and anything touching a live DB connection or self-hosted fonts could only be verified by static review (`tsc --noEmit`, `eslint`, and the unit/component tests that don't need a live DB) — run the full `npm run build`, a real login, and a real create/edit/delete on each resource locally before trusting this end to end. The two new migration files (Phase 3's `20260906190827_init` and Phase 5's `20260908120000_add_image_urls`) were both hand-written for the same reason — run `npm run db:migrate` to confirm they apply cleanly.
 
 ## Author
 Ali Rayyan

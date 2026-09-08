@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
+import Image from "next/image";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import LinkButton from "@/components/ui/LinkButton";
 import { getAllProjects } from "@/lib/data/projects";
 
-export const metadata: Metadata = {
-  title: "Projects | Cyber Portfolio CMS",
+export const metadata: Metadata = buildMetadata({
+  title: "Projects",
   description: "Security tools, development projects, and research work.",
-};
+  path: "/projects",
+});
 
 export default async function ProjectsPage() {
   const projects = await getAllProjects();
@@ -23,6 +26,17 @@ export default async function ProjectsPage() {
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <Card key={project.slug} interactive className="flex flex-col">
+            {project.imageUrl && (
+              <div className="relative -mx-6 -mt-6 mb-4 h-40 overflow-hidden rounded-t-xl">
+                <Image
+                  src={project.imageUrl}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            )}
             <Badge className="w-fit">{project.category}</Badge>
             <h2 className="mt-4 text-lg font-semibold text-foreground">
               {project.title}

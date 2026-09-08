@@ -1,11 +1,21 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import LinkButton from "@/components/ui/LinkButton";
 import Reveal from "@/components/motion/Reveal";
-import { SITE_OWNER } from "@/lib/constants";
+import { SITE_OWNER, SITE_TAGLINE, GITHUB_URL, LINKEDIN_URL } from "@/lib/constants";
+import { buildMetadata, buildPersonJsonLd } from "@/lib/seo";
 import { getFeaturedProjects } from "@/lib/data/projects";
 import { getSkillCategories } from "@/lib/data/skills";
+
+export const metadata: Metadata = buildMetadata({
+  title: `${SITE_OWNER} — ${SITE_TAGLINE}`,
+  description:
+    "SOC analyst intern building Wazuh and Sentinel detections, FortiGate log pipelines, phishing analysis, and the automation that turns raw alerts into analyst-ready context.",
+  path: "/",
+});
 
 export default async function HomePage() {
   const [featuredProjects, skillCategories] = await Promise.all([
@@ -13,8 +23,18 @@ export default async function HomePage() {
     getSkillCategories(),
   ]);
 
+  const personJsonLd = buildPersonJsonLd({
+    name: SITE_OWNER,
+    jobTitle: SITE_TAGLINE,
+    sameAs: [GITHUB_URL, LINKEDIN_URL],
+  });
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       {/* Hero — the dot grid is a quiet nod to network/node diagrams rather
           than a loud "hacker" motif; it fades out toward the bottom edge
           via the mask in .bg-grid-dots so it never fights the copy. */}
@@ -61,6 +81,17 @@ export default async function HomePage() {
           <Reveal trigger="scroll" staggerMs={100} className="mt-10 grid gap-6 md:grid-cols-3">
             {featuredProjects.map((project) => (
               <Card key={project.slug} interactive className="flex flex-col">
+                {project.imageUrl && (
+                  <div className="relative -mx-6 -mt-6 mb-4 h-40 overflow-hidden rounded-t-xl">
+                    <Image
+                      src={project.imageUrl}
+                      alt=""
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
                 <h3 className="text-lg font-semibold text-foreground">
                   {project.title}
                 </h3>

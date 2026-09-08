@@ -11,9 +11,11 @@
  * Idempotent by design: safe to run again later (e.g. to reset back to
  * "factory" content after testing CMS edits) — every table is fully reset
  * before insert rather than appended to, so re-running never produces
- * duplicates. Note: re-seeding does NOT touch blog_posts.content — that
- * column is written only through the CMS editor (Phase 5), never by this
- * script, so re-seeding never wipes an authored post body.
+ * duplicates. Note: re-seeding does NOT touch blog_posts.content or the
+ * imageUrl/coverImageUrl columns on projects/blog_posts — those are
+ * written only through the CMS (Phase 5's forms and Cloudinary upload),
+ * never by this script, so re-seeding never wipes authored content or an
+ * uploaded image.
  *
  * Run directly, per prisma.config.ts's migrations.seed:
  *   npx prisma db seed

@@ -40,6 +40,7 @@ model Project {
   category    ProjectCategory
   tags        String[]
   githubUrl   String?
+  imageUrl    String?
   featured    Boolean         @default(false)
   order       Int             @default(0)
   createdAt   DateTime        @default(now())
@@ -87,11 +88,12 @@ model BlogPost {
   date      DateTime
   excerpt   String
   // Full markdown body. Defaults to "" because today's placeholder posts
-  // (lib/data/blog.ts) don't have real bodies yet — the site's own
-  // PlaceholderBanner already tells visitors "Blog content will load from
-  // the database. Phase 5" — this field is what that promise fills in.
-  content   String   @default("")
-  tags      String[]
+  // (prisma/seed-data/blog.ts) don't have real bodies yet — the public
+  // blog detail page already tells visitors when a post's full write-up
+  // isn't published yet (Phase 5's CMS editor is what fills this in).
+  content       String   @default("")
+  coverImageUrl String?
+  tags          String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

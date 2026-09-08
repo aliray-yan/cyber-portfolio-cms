@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
+import { SITE_NAME, SITE_TAGLINE, SITE_OWNER } from "@/lib/constants";
+import { SITE_URL } from "@/lib/seo";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 
 // next/font self-hosts these at build time — no external request at
@@ -32,10 +33,29 @@ const jetBrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
 });
 
+const SITE_DESCRIPTION =
+  "A professional cybersecurity portfolio and content management platform showcasing projects, certifications, technical skills, and security research.";
+
 export const metadata: Metadata = {
-  title: `${SITE_NAME} | ${SITE_TAGLINE}`,
-  description:
-    "A professional cybersecurity portfolio and content management platform showcasing projects, certifications, technical skills, and security research.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  authors: [{ name: SITE_OWNER }],
+  openGraph: {
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

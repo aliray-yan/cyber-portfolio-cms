@@ -26,5 +26,6 @@ export const DASHBOARD_LINKS: NavLink[] = [
   { label: "Blog", href: "/dashboard/blog" },
   { label: "Certifications", href: "/dashboard/certifications" },
   { label: "Skills", href: "/dashboard/skills" },
+  { label: "Experience", href: "/dashboard/experience" },
   { label: "Settings", href: "/dashboard/settings" },
 ];

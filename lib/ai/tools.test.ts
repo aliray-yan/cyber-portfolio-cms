@@ -29,6 +29,7 @@ import type { SkillCategory } from "../data/skills.ts";
 
 const FIXTURE_PROJECTS: Project[] = [
   {
+    id: "fixture-1",
     slug: "secops-workbench",
     title: "SOC Workbench",
     description: "Alert triage and case management for a SOC team.",
@@ -38,6 +39,7 @@ const FIXTURE_PROJECTS: Project[] = [
     featured: true,
   },
   {
+    id: "fixture-2",
     slug: "threat-feed-automation",
     title: "Threat Feed Automation",
     description: "n8n pipeline that enriches and routes threat intel.",
@@ -45,6 +47,7 @@ const FIXTURE_PROJECTS: Project[] = [
     tags: ["n8n", "Automation"],
   },
   {
+    id: "fixture-3",
     slug: "rag-mastery",
     title: "RAG Mastery",
     description: "Full-stack RAG learning platform with a playground.",
@@ -55,19 +58,22 @@ const FIXTURE_PROJECTS: Project[] = [
 
 const FIXTURE_SKILL_CATEGORIES: SkillCategory[] = [
   {
+    id: "fixture-cat-1",
     title: "SOC & SIEM",
     skills: [
-      { name: "Wazuh", level: "Advanced" },
-      { name: "Sentinel", level: "Intermediate" },
+      { id: "fixture-skill-1", name: "Wazuh", level: "Advanced" },
+      { id: "fixture-skill-2", name: "Sentinel", level: "Intermediate" },
     ],
   },
   {
+    id: "fixture-cat-2",
     title: "Recon & Assessment",
-    skills: [{ name: "Nmap", level: "Advanced" }],
+    skills: [{ id: "fixture-skill-3", name: "Nmap", level: "Advanced" }],
   },
   {
+    id: "fixture-cat-3",
     title: "Automation & Development",
-    skills: [{ name: "n8n", level: "Advanced" }],
+    skills: [{ id: "fixture-skill-4", name: "n8n", level: "Advanced" }],
   },
 ];
 
